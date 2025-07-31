@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.maqradars.data.repository.MaqamRepository
 
-class ViewModelFactory(private val repository: MaqamRepository) : ViewModelProvider.Factory {
+class MaqamViewModelFactory(private val repository: MaqamRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MaqamViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

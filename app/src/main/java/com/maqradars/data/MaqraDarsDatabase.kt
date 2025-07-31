@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 abstract class MaqraDarsDatabase : RoomDatabase(){
     abstract fun maqamDao() : MaqamDao
     abstract fun ayatExampleDao() : AyatExampleDao
-    abstract fun glosariumTermDao() : GlosariumTerm
+    abstract fun glosariumTermDao() : GlosariumTermDao
     abstract fun userDao() : UserDao
 
     companion object {
