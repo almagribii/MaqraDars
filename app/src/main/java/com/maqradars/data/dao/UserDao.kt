@@ -9,7 +9,7 @@ import com.maqradars.data.entity.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface serDao {
+interface UserDao {
     @Insert
     suspend fun insertUser(user: User): Long
 
