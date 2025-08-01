@@ -19,12 +19,12 @@ interface MaqamDao {
     @Delete
     suspend fun deleteMaqam(maqam: Maqam)
 
-    @Query("SELECT * FROM maqamat WHERE id = :maqamId")
-    fun getMaqamById(maqamId: Long): Flow<List<Maqam>>
-
     @Query("SELECT * FROM maqamat ORDER BY name ASC")
     fun getAllMaqamat() : Flow<List<Maqam>>
 
     @Query("SELECT * FROM maqamat WHERE is_favorite = 1 ORDER BY name ASC")
     fun getFavoriteMaqamat() : Flow<List<Maqam>>
+
+    @Query("SELECT * FROM maqamat WHERE id = :maqamId")
+    fun getMaqamById(maqamId: Long): Flow<Maqam?>
 }

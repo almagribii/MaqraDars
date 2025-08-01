@@ -28,4 +28,8 @@ class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
             repository.delete(maqam)
         }
     }
+
+    suspend fun getMaqamById(maqamId: Long): Maqam? {
+        return repository.getMaqamById(maqamId)
+    }
 }

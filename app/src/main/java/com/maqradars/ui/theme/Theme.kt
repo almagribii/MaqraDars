@@ -2,59 +2,64 @@
 
 package com.maqradars.ui.theme
 
-import androidx.compose.material3.ColorScheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
-// Buat satu ColorScheme sederhana dari palet warna kita
-private val MaqraDarsColorScheme = ColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    primaryContainer = Primary,
-    onPrimaryContainer = OnPrimary,
-    inversePrimary = OnBackground,
-    secondary = Primary,
-    onSecondary = OnPrimary,
-    secondaryContainer = Primary,
-    onSecondaryContainer = OnPrimary,
-    tertiary = Primary,
-    onTertiary = OnPrimary,
-    tertiaryContainer = Primary,
-    onTertiaryContainer = OnPrimary,
-    background = Background,
-    onBackground = OnBackground,
-    surface = Surface,
-    onSurface = OnSurface,
-    surfaceVariant = Surface,
-    onSurfaceVariant = OnSurface,
-    surfaceTint = Primary,
-    inverseSurface = OnSurface,
-    inverseOnSurface = Background,
-    error = Color(0xFFCF6679), // Warna Error
-    onError = Color.Black,
-    errorContainer = Color(0xFFCF6679),
-    onErrorContainer = Color.Black,
-    outline = Primary,
-    outlineVariant = Primary,
-    scrim = Color.Black,
-    // Beberapa versi Material 3 mungkin membutuhkan argumen tambahan seperti ini
-    // surfaceBright = Surface,
-    // surfaceDim = Surface,
-    // surfaceContainer = Surface,
-    // surfaceContainerHigh = Surface,
-    // surfaceContainerHighest = Surface,
-    // surfaceContainerLow = Surface,
-    // surfaceContainerLowest = Surface,
+private val DarkColorScheme = darkColorScheme(
+    primary = dark_theme_primary,
+    onPrimary = dark_theme_onPrimary,
+    primaryContainer = dark_theme_primaryContainer,
+    onPrimaryContainer = dark_theme_onPrimaryContainer,
+    secondary = dark_theme_secondary,
+    onSecondary = dark_theme_onSecondary,
+    secondaryContainer = dark_theme_secondaryContainer,
+    onSecondaryContainer = dark_theme_onSecondaryContainer,
+    tertiary = dark_theme_tertiary,
+    onTertiary = dark_theme_onTertiary,
+    tertiaryContainer = dark_theme_tertiaryContainer,
+    onTertiaryContainer = dark_theme_onTertiaryContainer,
+    background = dark_theme_background,
+    onBackground = dark_theme_onBackground,
+    surface = dark_theme_surface,
+    onSurface = dark_theme_onSurface,
+    surfaceVariant = dark_theme_surfaceVariant,
+    onSurfaceVariant = dark_theme_onSurfaceVariant,
+)
+
+private val LightColorScheme = lightColorScheme(
+    primary = light_theme_primary,
+    onPrimary = light_theme_onPrimary,
+    primaryContainer = light_theme_primaryContainer,
+    onPrimaryContainer = light_theme_onPrimaryContainer,
+    secondary = light_theme_secondary,
+    onSecondary = light_theme_onSecondary,
+    secondaryContainer = light_theme_secondaryContainer,
+    onSecondaryContainer = light_theme_onSecondaryContainer,
+    tertiary = light_theme_tertiary,
+    onTertiary = light_theme_onTertiary,
+    tertiaryContainer = light_theme_tertiaryContainer,
+    onTertiaryContainer = light_theme_onTertiaryContainer,
+    background = light_theme_background,
+    onBackground = light_theme_onBackground,
+    surface = light_theme_surface,
+    onSurface = light_theme_onSurface,
+    surfaceVariant = SurfaceVariantLight,
+    onSurfaceVariant = OnSurfaceVariantLight,
 )
 
 @Composable
 fun MaqraDarsTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+
     MaterialTheme(
-        colorScheme = MaqraDarsColorScheme,
-        typography = Typography,
+        colorScheme = colorScheme,
+        typography = Typography, // Gunakan Typography yang sudah kita buat
         content = content
     )
 }
