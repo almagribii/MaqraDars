@@ -1,4 +1,4 @@
-// app/src/main/java/com/maqradars/MainActivity.kt
+/// app/src/main/java/com/maqradars/MainActivity.kt
 
 package com.maqradars
 
@@ -12,12 +12,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +33,7 @@ import com.maqradars.data.entity.MaqamVariant
 import com.maqradars.data.repository.MaqamRepository
 import com.maqradars.ui.screens.MaqamDetailScreen
 import com.maqradars.ui.screens.RecitationTypeSelectionScreen
+import com.maqradars.ui.screens.SettingsScreen
 import com.maqradars.ui.screens.TilawahScreen
 import com.maqradars.ui.theme.MaqraDarsTheme
 import com.maqradars.ui.viewmodel.MaqamViewModel
@@ -80,14 +79,12 @@ class MainActivity : ComponentActivity() {
                     Maqam(name = "Hijaz", description = "Maqam yang sedih dan penuh perasaan.", audioPathPureMaqam = "hijaz.mp3", isFavorite = false)
                 )
 
-                // Tambahkan varian untuk Maqam Bayati
                 val bayatiNaqaId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(maqamId = bayatiId, variantName = "Naqa", description = "Varian Bayati Naqa", audioPath = "bayati_naqa.mp3")
                 )
                 val bayatiKurdId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(maqamId = bayatiId, variantName = "Kurd", description = "Varian Bayati Kurd", audioPath = "bayati_kurd.mp3")
                 )
-                // Tambahkan ayat untuk varian Bayati Naqa
                 ayatExampleDao.insertAyatExample(
                     AyatExample(maqamVariantId = bayatiNaqaId, surahNumber = 1, ayatNumber = 1, arabicText = "بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ", translationText = "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.", audioPath = "alfatihah_1")
                 )
@@ -160,8 +157,9 @@ fun MaqraDarsApp(
                     onMujawwadClick = { id ->
                         navController.navigate("maqam_detail/$id")
                     },
+                    // PERBAIKAN: Mengirim nama surah 'Al-Fatihah' sebagai argumen
                     onTilawahClick = {
-                        navController.navigate("tilawah_screen")
+                        navController.navigate("tilawah_screen/Al-Fatihah")
                     },
                     onBackClick = { navController.popBackStack() }
                 )
@@ -174,8 +172,10 @@ fun MaqraDarsApp(
                     onBackClick = { navController.popBackStack() }
                 )
             }
-            composable("tilawah_screen") {
-                TilawahScreen(onBackClick = { navController.popBackStack() })
+            // PERBAIKAN: Rute Tilawah didefinisikan dengan argumen
+            composable("tilawah_screen/{surahName}") { backStackEntry ->
+                val surahName = backStackEntry.arguments?.getString("surahName") ?: "Tilawah"
+                TilawahScreen(surahName = surahName, onBackClick = { navController.popBackStack() })
             }
             composable(Screen.Settings.route) {
                 SettingsScreen()
@@ -257,103 +257,6 @@ fun MaqamItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RecitationTypeSelectionScreen(
-    maqamId: Long,
-    maqamName: String,
-    onMujawwadClick: (Long) -> Unit,
-    onTilawahClick: () -> Unit,
-    onBackClick: () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Pilih Bacaan: $maqamName") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Kembali"
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Pilih Jenis Bacaan", style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = { onMujawwadClick(maqamId) },
-                modifier = Modifier.fillMaxWidth().height(56.dp)
-            ) {
-                Text(text = "Mujawwad", style = MaterialTheme.typography.titleLarge)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onTilawahClick,
-                modifier = Modifier.fillMaxWidth().height(56.dp)
-            ) {
-                Text(text = "Tilawah", style = MaterialTheme.typography.titleLarge)
-            }
-        }
-    }
-}
-
-@Composable
-fun SettingsScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Ini adalah Halaman Pengaturan", style = MaterialTheme.typography.headlineSmall)
-        Text(text = "Fungsionalitas akan ditambahkan di sini.", style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TilawahScreen(onBackClick: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Tilawah Al-Fatihah") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Kembali"
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Memutar Surah Al-Fatihah...", style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(24.dp))
-            // TODO: Tambahkan kontrol audio di sini
         }
     }
 }
