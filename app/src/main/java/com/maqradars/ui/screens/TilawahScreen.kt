@@ -65,6 +65,12 @@ fun TilawahScreen(surahName: String, onBackClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.alfatihah ), // <-- Ganti dengan nama file Anda
+                contentDescription = "Teks Surah Al-Fatihah",
+                modifier = Modifier.padding(16.dp)
+            )
+
             Text(text = "Memutar Surah $surahName", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(24.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {

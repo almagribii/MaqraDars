@@ -94,24 +94,47 @@ class MainActivity : ComponentActivity() {
             val userDao = database.userDao()
 
             if (maqamDao.getAllMaqamat().first().isEmpty()) {
-                val bayatiId = maqamDao.insertMaqam(
-                    Maqam(name = "Bayati", description = "Maqam dasar yang tenang.", audioPathPureMaqam = "bayati.mp3", isFavorite = false)
-                )
                 val hijazId = maqamDao.insertMaqam(
-                    Maqam(name = "Hijaz", description = "Maqam yang sedih dan penuh perasaan.", audioPathPureMaqam = "hijaz.mp3", isFavorite = false)
+                    Maqam(name = "Hijaz", description = "Irama Hijaz memiliki ciri khas gerak lambat dan khas nuansa Timur Tengah. Iramanya tenang, indah, dan mendayu. Maqam ini cocok untuk ayat-ayat yang menceritakan sejarah para nabi, hukum, atau tentang kenikmatan surga.", audioPathPureMaqam = "hijaz.mp3", isFavorite = false)
+                )
+                val bayyatiId = maqamDao.insertMaqam(
+                    Maqam(name = "Bayyati", description = "Maqam yang paling sering digunakan untuk pembuka tilawah. Karakternya lembut, meliuk-liuk, dan terkesan khidmat. Sangat fleksibel dan sering dipakai untuk ayat-ayat tentang kebesaran Allah.", audioPathPureMaqam = "bayyati.mp3", isFavorite = false)
+                )
+                val shobaId = maqamDao.insertMaqam(
+                    Maqam(name = "Shoba", description = "Maqam ini memiliki karakter yang ringan, cepat, dan sendu. Iramanya halus dan lembut, sering digunakan untuk melantunkan ayat-ayat yang mengandung makna kesedihan, duka cita, atau penyesalan.", audioPathPureMaqam = "shoba.mp3", isFavorite = false)
+                )
+                val rastId = maqamDao.insertMaqam(
+                    Maqam(name = "Rast", description = "Dikenal dengan iramanya yang penuh semangat, lincah, dan tegas. Irama ini memiliki karakter yang ringan dan cepat. Sering digunakan untuk mengumandangkan azan dan menjadi pilihan untuk imam salat.", audioPathPureMaqam = "rast.mp3", isFavorite = false)
+                )
+                val sikaId = maqamDao.insertMaqam(
+                    Maqam(name = "Sika", description = "Memiliki karakter yang lembut, khidmat, dan mendayu-dayu. Nada-nadanya cenderung bersifat riang dan cemerlang, cocok untuk ayat-ayat yang berisi harapan, doa, larangan, atau perintah.", audioPathPureMaqam = "sika.mp3", isFavorite = false)
+                )
+                val jiharkahId = maqamDao.insertMaqam(
+                    Maqam(name = "Jiharkah", description = "Maqam ini memiliki karakter manis dan terkesan dalam. Iramanya dimulai dengan suara minor yang khas, lalu dilanjutkan dengan nada yang tinggi. Irama ini sering dilantunkan saat takbiran hari raya.", audioPathPureMaqam = "jiharkah.mp3", isFavorite = false)
+                )
+                val nahawandId = maqamDao.insertMaqam(
+                    Maqam(name = "Nahawand", description = "Memiliki nada yang indah, lembut, dan romantis. Karakter iramanya cenderung melankolis, sehingga sering digunakan pada ayat-ayat Al-Qur'an yang memiliki nuansa sedih atau kecintaan kepada Allah.", audioPathPureMaqam = "nahawand.mp3", isFavorite = false)
+                )
+                val bayatiHusainiId = maqamVariantDao.insertMaqamVariant(
+                    MaqamVariant(maqamId = bayyatiId, variantName = "Husaini", description = "Nuansa yang lebih lembut dan tenang. Sering digunakan untuk ayat-ayat tentang doa dan munajat.", audioPath = "bayati_husaini.mp3")
                 )
 
-                val bayatiNaqaId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(maqamId = bayatiId, variantName = "Naqa", description = "Varian Bayati Naqa", audioPath = "bayati_naqa.mp3")
+                val bayatiSyuriId = maqamVariantDao.insertMaqamVariant(
+                    MaqamVariant(maqamId = bayyatiId, variantName = "Syuri", description = "Irama yang lebih cepat, energik, dan tegas. Sering dipakai untuk ayat-ayat yang memuat perintah atau larangan.", audioPath = "bayati_syuri.mp3")
                 )
+
+                val bayatiNawaId = maqamVariantDao.insertMaqamVariant(
+                    MaqamVariant(maqamId = bayyatiId, variantName = "Nawa", description = "Varian dengan nada menengah yang stabil, sering menjadi jembatan antara nada awal dan nada tinggi.", audioPath = "bayati_nawa.mp3")
+                )
+
                 val bayatiKurdId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(maqamId = bayatiId, variantName = "Kurd", description = "Varian Bayati Kurd", audioPath = "bayati_kurd.mp3")
+                    MaqamVariant(maqamId = bayyatiId, variantName = "Kurd", description = "Perpaduan Bayyati dengan Maqam Kurd, menciptakan irama yang unik dengan nuansa sedikit melankolis.", audioPath = "bayati_kurd.mp3")
                 )
                 ayatExampleDao.insertAyatExample(
-                    AyatExample(maqamVariantId = bayatiNaqaId, surahNumber = 1, ayatNumber = 1, arabicText = "بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ", translationText = "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.", audioPath = "alfatihah_1")
+                    AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 1, arabicText = "بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ", translationText = "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.", audioPath = "alfatihah_1")
                 )
                 ayatExampleDao.insertAyatExample(
-                    AyatExample(maqamVariantId = bayatiNaqaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2")
+                    AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2")
                 )
                 glosariumTermDao.insertGlosariumTerm(
                     GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran.")
