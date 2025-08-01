@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MaqamDetailScreen(
-    viewModel: MaqamViewModel, // <-- Parameter 'viewModel' harus ada di sini
+    viewModel: MaqamViewModel,
     maqamId: Long,
     onBackClick: () -> Unit
 ) {
@@ -64,7 +64,6 @@ fun MaqamDetailScreen(
                     text = maqam!!.description,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                // TODO: Tambahkan player audio di sini
             } else {
                 Text(text = "Maqam tidak ditemukan.")
             }
