@@ -9,9 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,10 +17,10 @@ fun RecitationTypeSelectionScreen(
     maqamId: Long,
     maqamName: String,
     onMujawwadClick: (Long) -> Unit,
-    onTilawahClick: (String) -> Unit, // Mengubah tipe parameter
+    // PERBAIKAN: onTilawahClick sekarang memiliki parameter surahName
+    onTilawahClick: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
-    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -56,9 +54,8 @@ fun RecitationTypeSelectionScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = {
-                    onTilawahClick("Al-Fatihah")
-                },
+                // PERBAIKAN: Panggil onTilawahClick dengan parameter
+                onClick = { onTilawahClick("Al-Fatihah") },
                 modifier = Modifier.fillMaxWidth().height(56.dp)
             ) {
                 Text(text = "Tilawah", style = MaterialTheme.typography.titleLarge)

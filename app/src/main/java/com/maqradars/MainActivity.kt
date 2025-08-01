@@ -1,4 +1,4 @@
-/// app/src/main/java/com/maqradars/MainActivity.kt
+// app/src/main/java/com/maqradars/MainActivity.kt
 
 package com.maqradars
 
@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,9 +29,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.maqradars.data.MaqraDarsDatabase
 import com.maqradars.data.entity.AyatExample
+import com.maqradars.data.entity.GlosariumTerm
 import com.maqradars.data.entity.Maqam
 import com.maqradars.data.entity.MaqamVariant
 import com.maqradars.data.repository.MaqamRepository
+import com.maqradars.ui.screens.GlosariumScreen
 import com.maqradars.ui.screens.MaqamDetailScreen
 import com.maqradars.ui.screens.RecitationTypeSelectionScreen
 import com.maqradars.ui.screens.SettingsScreen
@@ -45,7 +48,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     private val database by lazy { MaqraDarsDatabase.getDatabase(this) }
-    private val repository by lazy { MaqamRepository(database.maqamDao(), database.maqamVariantDao(), database.ayatExampleDao()) }
+    private val repository by lazy { MaqamRepository(database.maqamDao(), database.maqamVariantDao(), database.ayatExampleDao(), database.glosariumTermDao()) }
     private val viewModel: MaqamViewModel by viewModels { MaqamViewModelFactory(repository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +74,8 @@ class MainActivity : ComponentActivity() {
             val maqamDao = database.maqamDao()
             val maqamVariantDao = database.maqamVariantDao()
             val ayatExampleDao = database.ayatExampleDao()
+            val glosariumTermDao = database.glosariumTermDao()
+
             if (maqamDao.getAllMaqamat().first().isEmpty()) {
                 val bayatiId = maqamDao.insertMaqam(
                     Maqam(name = "Bayati", description = "Maqam dasar yang tenang.", audioPathPureMaqam = "bayati.mp3", isFavorite = false)
@@ -92,12 +97,36 @@ class MainActivity : ComponentActivity() {
                     AyatExample(maqamVariantId = bayatiNaqaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2")
                 )
             }
+
+            // PERBAIKAN: Pisahkan kondisi untuk glosarium
+            if (glosariumTermDao.getAllGlosariumTerms().first().isEmpty()) {
+                val glosariumTerms = listOf(
+                    GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama yang digunakan dalam pembacaan Al-Quran."),
+                    GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca huruf-huruf Al-Quran dengan benar dan tepat."),
+                    GlosariumTerm(term = "Tilawah", definition = "Bacaan Al-Quran yang dilantunkan dengan tartil dan penuh penghayatan."),
+                    GlosariumTerm(term = "Qira'ah", definition = "Cara pembacaan Al-Quran yang memiliki variasi dan sanad yang berbeda-beda."),
+                    GlosariumTerm(term = "Tartil", definition = "Membaca Al-Quran dengan perlahan, tenang, dan jelas, sesuai dengan aturan tajwid."),
+                    GlosariumTerm(term = "Idgham", definition = "Meleburkan dua huruf yang berdekatan menjadi satu huruf yang bertasydid."),
+                    GlosariumTerm(term = "Ikhfa'", definition = "Menyamarkan atau menyembunyikan bunyi huruf nun mati (نْ) atau tanwin."),
+                    GlosariumTerm(term = "Iqlab", definition = "Mengganti bunyi huruf nun mati (نْ) atau tanwin menjadi bunyi mim (م)."),
+                    GlosariumTerm(term = "Izhar", definition = "Membaca huruf nun mati (نْ) atau tanwin dengan jelas dan tanpa dengung."),
+                    GlosariumTerm(term = "Mad", definition = "Memanjangkan bunyi huruf pada kata-kata tertentu."),
+                    GlosariumTerm(term = "Ghunnah", definition = "Dengungan yang keluar dari rongga hidung saat membaca huruf mim (م) atau nun (ن) yang bertasydid."),
+                    GlosariumTerm(term = "Tarteel", definition = "Membaca Al-Quran dengan perlahan, tenang, dan jelas, sesuai dengan aturan tajwid."),
+                    GlosariumTerm(term = "Sifatul Huruf", definition = "Karakteristik atau sifat-sifat yang dimiliki oleh setiap huruf hijaiyah."),
+                    GlosariumTerm(term = "Makhrajul Huruf", definition = "Tempat keluarnya suara atau huruf hijaiyah dari organ-organ bicara."),
+                    GlosariumTerm(term = "Isti'adzah", definition = "Mengucapkan 'A'udzubillah...' sebelum memulai bacaan Al-Quran."),
+                    GlosariumTerm(term = "Basmalah", definition = "Mengucapkan 'Bismillahirrahmanirrahim...' di awal setiap surah, kecuali Surah At-Taubah.")
+                )
+                glosariumTermDao.insertAll(glosariumTerms)
+            }
         }
     }
 }
 
 sealed class Screen(val route: String, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
     data object MaqamList : Screen("maqam_list", "Maqamat", Icons.Default.Home)
+    data object Glosarium : Screen("glosarium", "Glosarium", Icons.Default.Info)
     data object Settings : Screen("settings", "Pengaturan", Icons.Default.Settings)
 }
 
@@ -113,7 +142,7 @@ fun MaqraDarsApp(
     Scaffold(
         bottomBar = {
             NavigationBar {
-                val items = listOf(Screen.MaqamList, Screen.Settings)
+                val items = listOf(Screen.MaqamList, Screen.Glosarium, Screen.Settings)
                 items.forEach { screen ->
                     NavigationBarItem(
                         icon = { Icon(screen.icon, contentDescription = screen.title) },
@@ -157,7 +186,6 @@ fun MaqraDarsApp(
                     onMujawwadClick = { id ->
                         navController.navigate("maqam_detail/$id")
                     },
-                    // PERBAIKAN: Mengirim nama surah 'Al-Fatihah' sebagai argumen
                     onTilawahClick = {
                         navController.navigate("tilawah_screen/Al-Fatihah")
                     },
@@ -172,10 +200,12 @@ fun MaqraDarsApp(
                     onBackClick = { navController.popBackStack() }
                 )
             }
-            // PERBAIKAN: Rute Tilawah didefinisikan dengan argumen
             composable("tilawah_screen/{surahName}") { backStackEntry ->
                 val surahName = backStackEntry.arguments?.getString("surahName") ?: "Tilawah"
                 TilawahScreen(surahName = surahName, onBackClick = { navController.popBackStack() })
+            }
+            composable(Screen.Glosarium.route) {
+                GlosariumScreen(viewModel = viewModel)
             }
             composable(Screen.Settings.route) {
                 SettingsScreen()

@@ -13,6 +13,9 @@ interface GlosariumTermDao {
     @Insert
     suspend fun insertGlosariumTerm(term: GlosariumTerm): Long
 
+    @Insert
+    suspend fun insertAll(terms: List<GlosariumTerm>)
+
     @Update
     suspend fun updateGlosariumTermI(term: GlosariumTerm)
 
