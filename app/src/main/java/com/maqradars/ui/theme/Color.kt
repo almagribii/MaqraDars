@@ -37,11 +37,11 @@ val GreenPrimaryContainerDark = Color(0xFF1B5E20)
 val GreenOnPrimaryContainerDark = Color(0xFFC8E6C9)
 
 val GoldSecondaryDark = Color(0xFFFFC107)
-val GoldOnSecondaryDark = Color(0xFF3D2700)
-val GoldSecondaryContainerDark = Color(0xFF59401C)
+val GoldOnSecondaryDark = Color(0xFF17420D)
+val GoldSecondaryContainerDark = Color(0xFF17420D)
 val GoldOnSecondaryContainerDark = Color(0xFFFFFBEA)
 
-val BrownTertiaryDark = Color(0xFFFFA500) // Oranye tua
+val BrownTertiaryDark = Color(0xFFFFA500)
 val BrownOnTertiaryDark = Color(0xFF3A1800)
 val BrownTertiaryContainerDark = Color(0xFF5A2A0A)
 val BrownOnTertiaryContainerDark = Color(0xFFFFDBCA)

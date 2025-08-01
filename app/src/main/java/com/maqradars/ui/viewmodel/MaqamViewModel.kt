@@ -8,46 +8,62 @@ import com.maqradars.data.entity.AyatExample
 import com.maqradars.data.entity.GlosariumTerm
 import com.maqradars.data.entity.Maqam
 import com.maqradars.data.entity.MaqamVariant
+import com.maqradars.data.entity.User
 import com.maqradars.data.repository.MaqamRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
 
-    // Metode untuk Maqam
     val allMaqamat: Flow<List<Maqam>> = repository.allMaqamat
-    val allGlosariumTerms: Flow<List<GlosariumTerm>> = repository.allGlosariumTerms
 
+    fun getVariantsByMaqamId(maqamId: Long): Flow<List<MaqamVariant>> {
+        return repository.getVariantsByMaqamId(maqamId)
+    }
+
+    fun getAyatExamplesByMaqamVariantId(maqamVariantId: Long): Flow<List<AyatExample>> {
+        return repository.getAyatExamplesByMaqamVariantId(maqamVariantId)
+    }
 
     suspend fun getMaqamById(maqamId: Long): Maqam? {
         return repository.getMaqamById(maqamId)
     }
 
-    fun insertMaqam(maqam: Maqam) {
+    suspend fun getMaqamVariantById(variantId: Long): MaqamVariant? {
+        return repository.getMaqamVariantById(variantId)
+    }
+
+    suspend fun insertMaqam(maqam: Maqam): Long {
+        return repository.insertMaqam(maqam)
+    }
+
+    val allGlosariumTerms: Flow<List<GlosariumTerm>> = repository.allGlosariumTerms
+
+    val user: Flow<User?> = repository.getSingleUser()
+
+    // --- FUNGSI UPDATE YANG SUDAH DIPERBAIKI ---
+    fun updateIsDarkMode(isDarkMode: Boolean) {
         viewModelScope.launch {
-            repository.insertMaqam(maqam)
+            val user = repository.getSingleUser().firstOrNull() // Mengambil data sekali
+            if (user != null) {
+                val updatedUser = user.copy(isDarkMode = isDarkMode)
+                repository.updateUser(updatedUser)
+            }
         }
     }
 
-    // Metode untuk MaqamVariant
-    fun getVariantsByMaqamId(maqamId: Long): Flow<List<MaqamVariant>> {
-        return repository.getVariantsByMaqamId(maqamId)
+    // --- AKHIR FUNGSI UPDATE YANG DIPERBAIKI ---
+
+    suspend fun insertMaqamVariant(variant: MaqamVariant): Long {
+        return repository.insertMaqamVariant(variant)
     }
 
-    fun insertMaqamVariant(variant: MaqamVariant) {
-        viewModelScope.launch {
-            repository.insertMaqamVariant(variant)
-        }
+    suspend fun insertAyatExample(ayat: AyatExample): Long {
+        return repository.insertAyatExample(ayat)
     }
 
-    // Metode untuk AyatExample
-    fun getAyatExamplesByMaqamVariantId(maqamVariantId: Long): Flow<List<AyatExample>> {
-        return repository.getAyatExamplesByMaqamVariantId(maqamVariantId)
-    }
-
-    fun insertAyatExample(ayat: AyatExample) {
-        viewModelScope.launch {
-            repository.insertAyatExample(ayat)
-        }
+    suspend fun insertGlosariumTerm(term: GlosariumTerm) {
+        // Implementasi opsional
     }
 }

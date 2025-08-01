@@ -44,22 +44,38 @@ import com.maqradars.ui.viewmodel.MaqamViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.isSystemInDarkTheme
+import android.content.res.Configuration
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import android.media.MediaPlayer
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import com.maqradars.data.entity.User
+import com.maqradars.ui.screens.AboutScreen
 
 class MainActivity : ComponentActivity() {
 
     private val database by lazy { MaqraDarsDatabase.getDatabase(this) }
-    private val repository by lazy { MaqamRepository(database.maqamDao(), database.maqamVariantDao(), database.ayatExampleDao(), database.glosariumTermDao()) }
+    private val repository by lazy { MaqamRepository(database.maqamDao(), database.maqamVariantDao(), database.ayatExampleDao(), database.glosariumTermDao(), database.userDao()) }
     private val viewModel: MaqamViewModel by viewModels { MaqamViewModelFactory(repository) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        addInitialData()
+        val isSystemInDarkMode = (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        addInitialData(isSystemInDarkMode)
 
         setContent {
-            MaqraDarsTheme {
+            val user by viewModel.user.collectAsState(initial = null)
+            val isDarkMode = user?.isDarkMode ?: isSystemInDarkTheme()
+
+            MaqraDarsTheme(darkTheme = isDarkMode) {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
@@ -69,12 +85,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun addInitialData() {
+    private fun addInitialData(isSystemInDarkMode: Boolean) {
         lifecycleScope.launch(Dispatchers.IO) {
             val maqamDao = database.maqamDao()
             val maqamVariantDao = database.maqamVariantDao()
             val ayatExampleDao = database.ayatExampleDao()
             val glosariumTermDao = database.glosariumTermDao()
+            val userDao = database.userDao()
 
             if (maqamDao.getAllMaqamat().first().isEmpty()) {
                 val bayatiId = maqamDao.insertMaqam(
@@ -96,29 +113,15 @@ class MainActivity : ComponentActivity() {
                 ayatExampleDao.insertAyatExample(
                     AyatExample(maqamVariantId = bayatiNaqaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2")
                 )
-            }
-
-            // PERBAIKAN: Pisahkan kondisi untuk glosarium
-            if (glosariumTermDao.getAllGlosariumTerms().first().isEmpty()) {
-                val glosariumTerms = listOf(
-                    GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama yang digunakan dalam pembacaan Al-Quran."),
-                    GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca huruf-huruf Al-Quran dengan benar dan tepat."),
-                    GlosariumTerm(term = "Tilawah", definition = "Bacaan Al-Quran yang dilantunkan dengan tartil dan penuh penghayatan."),
-                    GlosariumTerm(term = "Qira'ah", definition = "Cara pembacaan Al-Quran yang memiliki variasi dan sanad yang berbeda-beda."),
-                    GlosariumTerm(term = "Tartil", definition = "Membaca Al-Quran dengan perlahan, tenang, dan jelas, sesuai dengan aturan tajwid."),
-                    GlosariumTerm(term = "Idgham", definition = "Meleburkan dua huruf yang berdekatan menjadi satu huruf yang bertasydid."),
-                    GlosariumTerm(term = "Ikhfa'", definition = "Menyamarkan atau menyembunyikan bunyi huruf nun mati (نْ) atau tanwin."),
-                    GlosariumTerm(term = "Iqlab", definition = "Mengganti bunyi huruf nun mati (نْ) atau tanwin menjadi bunyi mim (م)."),
-                    GlosariumTerm(term = "Izhar", definition = "Membaca huruf nun mati (نْ) atau tanwin dengan jelas dan tanpa dengung."),
-                    GlosariumTerm(term = "Mad", definition = "Memanjangkan bunyi huruf pada kata-kata tertentu."),
-                    GlosariumTerm(term = "Ghunnah", definition = "Dengungan yang keluar dari rongga hidung saat membaca huruf mim (م) atau nun (ن) yang bertasydid."),
-                    GlosariumTerm(term = "Tarteel", definition = "Membaca Al-Quran dengan perlahan, tenang, dan jelas, sesuai dengan aturan tajwid."),
-                    GlosariumTerm(term = "Sifatul Huruf", definition = "Karakteristik atau sifat-sifat yang dimiliki oleh setiap huruf hijaiyah."),
-                    GlosariumTerm(term = "Makhrajul Huruf", definition = "Tempat keluarnya suara atau huruf hijaiyah dari organ-organ bicara."),
-                    GlosariumTerm(term = "Isti'adzah", definition = "Mengucapkan 'A'udzubillah...' sebelum memulai bacaan Al-Quran."),
-                    GlosariumTerm(term = "Basmalah", definition = "Mengucapkan 'Bismillahirrahmanirrahim...' di awal setiap surah, kecuali Surah At-Taubah.")
+                glosariumTermDao.insertGlosariumTerm(
+                    GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran.")
                 )
-                glosariumTermDao.insertAll(glosariumTerms)
+                glosariumTermDao.insertGlosariumTerm(
+                    GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca huruf-huruf Al-Quran dengan benar.")
+                )
+            }
+            if (userDao.getSingleUser().first() == null) {
+                userDao.insertUser(User(username = "default_user", isDarkMode = isSystemInDarkMode))
             }
         }
     }
@@ -186,8 +189,8 @@ fun MaqraDarsApp(
                     onMujawwadClick = { id ->
                         navController.navigate("maqam_detail/$id")
                     },
-                    onTilawahClick = {
-                        navController.navigate("tilawah_screen/Al-Fatihah")
+                    onTilawahClick = { surahName ->
+                        navController.navigate("tilawah_screen/$surahName")
                     },
                     onBackClick = { navController.popBackStack() }
                 )
@@ -208,7 +211,10 @@ fun MaqraDarsApp(
                 GlosariumScreen(viewModel = viewModel)
             }
             composable(Screen.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(viewModel = viewModel, navController = navController) // <-- PERBAIKAN DI SINI
+            }
+            composable("about_screen") {
+                AboutScreen(onBackClick = { navController.popBackStack() })
             }
         }
     }
@@ -234,17 +240,7 @@ fun MaqamListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    coroutineScope.launch {
-                        viewModel.insertMaqam(Maqam(name = "Rast", description = "Maqam klasik yang serius dan formal.", audioPathPureMaqam = "rast.mp3", isFavorite = false))
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.tertiary,
-                contentColor = MaterialTheme.colorScheme.onTertiary
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Tambah Maqam")
-            }
+
         }
     ) { paddingValues ->
         LazyColumn(

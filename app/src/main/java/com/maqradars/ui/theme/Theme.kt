@@ -52,14 +52,14 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun MaqraDarsTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography, // Gunakan Typography yang sudah kita buat
+        typography = Typography,
         content = content
     )
 }

@@ -54,6 +54,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation(libs.androidx.leanback)
+    implementation(libs.glide)
 
     // Room
     val roomVersion = "2.6.0" // Versi yang stabil

@@ -50,23 +50,23 @@ fun GlosariumItem(term: GlosariumTerm) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GlosariumScreenPreview() {
-    MaqraDarsTheme {
-        val dummyTerms = listOf(
-            GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran."),
-            GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca Al-Quran dengan benar.")
-        )
-        // Preview dengan data dummy
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(dummyTerms) { term ->
-                GlosariumItem(term = term)
-            }
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun GlosariumScreenPreview() {
+//    MaqraDarsTheme {
+//        val dummyTerms = listOf(
+//            GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran."),
+//            GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca Al-Quran dengan benar.")
+//        )
+//        // Preview dengan data dummy
+//        LazyColumn(
+//            modifier = Modifier.fillMaxSize(),
+//            contentPadding = PaddingValues(16.dp),
+//            verticalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            items(dummyTerms) { term ->
+//                GlosariumItem(term = term)
+//            }
+//        }
+//    }
+//}
