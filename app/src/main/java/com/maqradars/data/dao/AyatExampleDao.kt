@@ -1,7 +1,8 @@
+// app/src/main/java/com/maqradars/data/dao/AyatExampleDao.kt
+
 package com.maqradars.data.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -11,20 +12,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AyatExampleDao {
     @Insert
-    suspend fun insertAyatExample(ayatExample: AyatExample) : Long
+    suspend fun insertAyatExample(ayatExample: AyatExample): Long
 
     @Update
     suspend fun updateAyatExample(ayatExample: AyatExample)
 
-    @Delete
-    suspend fun deleteAyatExample(ayatExample: AyatExample)
+    @Query("SELECT * FROM ayat_examples WHERE maqam_variant_id = :maqamVariantId ORDER BY surah_number ASC, ayat_number ASC")
+    fun getAyatExamplesByMaqamVariantId(maqamVariantId: Long): Flow<List<AyatExample>>
 
-    @Query("SELECT * FROM ayat_examples WHERE id = :ayatExampleId")
-    fun getAyatById(ayatExampleId: Long) : Flow <AyatExample?>
-
-    @Query("SELECT * FROM ayat_examples WHERE maqam_id = :maqamId ORDER BY surah_number")
-    fun getAyatExamplesByMaqamId(maqamId : Long) : Flow<List<AyatExample>>
-
-    @Query("DELETE FROM ayat_examples WHERE id = :ayatExampleId")
-    suspend fun deleteAyatExampleById(ayatExampleId: Long)
+    @Query("SELECT * FROM ayat_examples WHERE id = :ayatExampleId LIMIT 1")
+    fun getAyatExampleById(ayatExampleId: Long): Flow<AyatExample?>
 }

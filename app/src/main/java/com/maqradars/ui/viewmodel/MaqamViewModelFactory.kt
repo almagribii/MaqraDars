@@ -1,3 +1,5 @@
+// app/src/main/java/com/maqradars/ui/viewmodel/MaqamViewModelFactory.kt
+
 package com.maqradars.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -10,6 +12,6 @@ class MaqamViewModelFactory(private val repository: MaqamRepository) : ViewModel
             @Suppress("UNCHECKED_CAST")
             return MaqamViewModel(repository) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel Class")
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

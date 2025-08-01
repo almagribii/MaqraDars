@@ -4,6 +4,7 @@ package com.maqradars.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.maqradars.data.entity.AyatExample
 import com.maqradars.data.entity.Maqam
 import com.maqradars.data.entity.MaqamVariant
 import com.maqradars.data.repository.MaqamRepository
@@ -22,8 +23,9 @@ class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
         return repository.getVariantsByMaqamId(maqamId)
     }
 
-    suspend fun getMaqamVariantById(variantId: Long): MaqamVariant? {
-        return repository.getMaqamVariantById(variantId)
+    // Metode baru untuk mengambil daftar ayat
+    fun getAyatExamplesByMaqamVariantId(maqamVariantId: Long): Flow<List<AyatExample>> {
+        return repository.getAyatExamplesByMaqamVariantId(maqamVariantId)
     }
 
     // Anda bisa tambahkan fungsi insertMaqam di sini
