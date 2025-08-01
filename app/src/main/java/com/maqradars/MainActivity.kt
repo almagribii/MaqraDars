@@ -5,6 +5,7 @@ package com.maqradars
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         // Menambahkan data awal ke database saat aplikasi pertama kali dibuat
         // Ini hanya untuk contoh. Anda bisa menghapus ini setelah database terisi.
@@ -54,19 +56,32 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun addInitialData() {
-        // Meluncurkan coroutine untuk melakukan operasi database di background thread
         lifecycleScope.launch(Dispatchers.IO) {
             val maqamDao = database.maqamDao()
-            // Hanya tambahkan data jika tabel Maqam kosong
             if (maqamDao.getAllMaqamat().first().isEmpty()) {
                 maqamDao.insertMaqam(
-                    Maqam(name = "Bayati", description = "Maqam dasar yang tenang", audioPathPureMaqam = "bayati.mp3", isFavorite = false)
+                    Maqam(
+                        name = "Bayati",
+                        description = "Maqam dasar yang tenang",
+                        audioPathPureMaqam = "bayati.mp3",
+                        isFavorite = false
+                    )
                 )
                 maqamDao.insertMaqam(
-                    Maqam(name = "Hijaz", description = "Maqam yang sedih dan penuh perasaan", audioPathPureMaqam = "hijaz.mp3", isFavorite = false)
+                    Maqam(
+                        name = "Hijaz",
+                        description = "Maqam yang sedih dan penuh perasaan",
+                        audioPathPureMaqam = "hijaz.mp3",
+                        isFavorite = false
+                    )
                 )
                 maqamDao.insertMaqam(
-                    Maqam(name = "Nahawand", description = "Maqam yang penuh melodi dan ekspresif", audioPathPureMaqam = "nahawand.mp3", isFavorite = false)
+                    Maqam(
+                        name = "Nahawand",
+                        description = "Maqam yang penuh melodi dan ekspresif",
+                        audioPathPureMaqam = "nahawand.mp3",
+                        isFavorite = false
+                    )
                 )
             }
         }
@@ -76,7 +91,6 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MaqamListScreen(viewModel: MaqamViewModel) {
-    // Mengambil data Maqam dari ViewModel sebagai State
     val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList())
 
     Scaffold(
@@ -108,7 +122,6 @@ fun MaqamListScreen(viewModel: MaqamViewModel) {
         }
     }
 }
-
 @Composable
 fun MaqamItem(maqam: Maqam) {
     Card(
@@ -136,15 +149,26 @@ fun MaqamItem(maqam: Maqam) {
 fun MaqamListPreview() {
     MaqraDarsTheme {
         val dummyMaqamat = listOf(
-            Maqam(name = "Bayati", description = "Maqam dasar yang tenang", audioPathPureMaqam = "", isFavorite = false),
-            Maqam(name = "Hijaz", description = "Maqam yang sedih dan penuh perasaan", audioPathPureMaqam = "", isFavorite = false),
+            Maqam(
+                name = "Bayati",
+                description = "Maqam dasar yang tenang",
+                audioPathPureMaqam = "",
+                isFavorite = false
+            ),
+            Maqam(
+                name = "Hijaz",
+                description = "Maqam yang sedih dan penuh perasaan",
+                audioPathPureMaqam = "",
+                isFavorite = false
+            ),
         )
-        // Preview dengan data dummy
         Scaffold(
             topBar = { TopAppBar(title = { Text("Daftar Maqamat") }) }
         ) { paddingValues ->
             LazyColumn(
-                modifier = Modifier.padding(paddingValues).fillMaxSize(),
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
