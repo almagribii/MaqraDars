@@ -24,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +40,11 @@ fun GlosariumScreen(viewModel: MaqamViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Glosarium") },
+                title = { Text(text = "Glosarium", fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 actions = {
                     IconButton(onClick = { searchQuery = "" }) {
                         Icon(

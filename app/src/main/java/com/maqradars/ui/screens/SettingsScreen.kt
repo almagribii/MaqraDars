@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.maqradars.ui.viewmodel.MaqamViewModel
@@ -30,8 +31,16 @@ fun SettingsScreen(viewModel: MaqamViewModel, navController: NavController) {
     val user by viewModel.user.collectAsState(initial = null)
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(text = "Pengaturan") }) }
-    ) { paddingValues ->
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Pengaturan", fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ){ paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)

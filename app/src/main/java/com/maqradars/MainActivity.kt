@@ -2,6 +2,8 @@
 
 package com.maqradars
 
+import MaqamListScreen
+import MaqraDarsApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -59,6 +61,7 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +80,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val isSystemInDarkMode = (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         addInitialData(isSystemInDarkMode)
-
+        enableEdgeToEdge()
         setContent {
             val user by viewModel.user.collectAsState(initial = null)
             val isDarkMode = user?.isDarkMode ?: isSystemInDarkTheme()
@@ -245,260 +248,6 @@ sealed class Screen(val route: String, val title: String, val icon: androidx.com
     data object Settings : Screen("settings", "Pengaturan", Icons.Default.Settings)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MaqraDarsApp(
-    navController: NavHostController,
-    viewModel: MaqamViewModel
-) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                val items = listOf(Screen.MaqamList, Screen.Glosarium, Screen.Settings)
-                items.forEach { screen ->
-                    NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = screen.title) },
-                        label = { Text(screen.title) },
-                        selected = currentRoute?.startsWith(screen.route) == true,
-                        onClick = {
-                            if (currentRoute?.startsWith(screen.route) == false) {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.MaqamList.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(Screen.MaqamList.route) {
-                MaqamListScreen(
-                    viewModel = viewModel,
-                    onMaqamClick = { maqamId, maqamName ->
-                        navController.navigate("recitation_type_selection/$maqamId/$maqamName")
-                    }
-                )
-            }
-            composable("recitation_type_selection/{maqamId}/{maqamName}") { backStackEntry ->
-                val maqamId = backStackEntry.arguments?.getString("maqamId")?.toLongOrNull() ?: 0L
-                val maqamName = backStackEntry.arguments?.getString("maqamName") ?: ""
-                RecitationTypeSelectionScreen(
-                    maqamId = maqamId,
-                    maqamName = maqamName,
-                    onMujawwadClick = { id ->
-                        navController.navigate("maqam_detail/$id")
-                    },
-                    onTilawahClick = { surahName ->
-                        navController.navigate("tilawah_screen/$surahName")
-                    },
-                    onBackClick = { navController.popBackStack() }
-                )
-            }
-            composable("maqam_detail/{maqamId}") { backStackEntry ->
-                val maqamId = backStackEntry.arguments?.getString("maqamId")?.toLongOrNull() ?: 0L
-                MaqamDetailScreen(
-                    viewModel = viewModel,
-                    maqamId = maqamId,
-                    onBackClick = { navController.popBackStack() }
-                )
-            }
-            composable("tilawah_screen/{surahName}") { backStackEntry ->
-                val surahName = backStackEntry.arguments?.getString("surahName") ?: "Tilawah"
-                TilawahScreen(surahName = surahName, onBackClick = { navController.popBackStack() })
-            }
-            composable(Screen.Glosarium.route) {
-                GlosariumScreen(viewModel = viewModel)
-            }
-            composable(Screen.Settings.route) {
-                SettingsScreen(viewModel = viewModel, navController = navController) // <-- PERBAIKAN DI SINI
-            }
-            composable("about_screen") {
-                AboutScreen(onBackClick = { navController.popBackStack() })
-            }
-            composable("privacy_policy_screen") {
-                PrivacyPolicyScreen(onBackClick = { navController.popBackStack() })
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MaqamListScreen(
-    viewModel: MaqamViewModel,
-    onMaqamClick: (Long, String) -> Unit
-) {
-    val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList())
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "MaqraDars", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            // Bagian Sambutan
-            Text(
-                text = "Selamat datang, Almagribi!",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            // Bagian Belajar Maqam
-            Text(
-                text = "Pelajari Maqam",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Card(
-                modifier = Modifier.fillMaxWidth().height(150.dp)
-            ) {
-                // Di sini Anda bisa menambahkan elemen UI interaktif lainnya
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Fitur Belajar Interaktif akan hadir!",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Bagian Daftar Maqam (Horizontal Scroll)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Daftar Maqam",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                TextButton(onClick = { /* TODO: Lihat semua daftar */ }) {
-                    Text(text = "Lihat Semua")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Menggunakan LazyRow untuk tampilan horizontal
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 0.dp)
-            ) {
-                items(maqamat) { maqam ->
-                    MaqamCardItem(maqam = maqam, onMaqamClick = onMaqamClick)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Shortcut Glosarium
-            Card(
-                modifier = Modifier.fillMaxWidth().height(70.dp).clickable {
-                    // TODO: Navigasi ke Glosarium
-                }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "Akses Cepat: Glosarium", style = MaterialTheme.typography.titleMedium)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MaqamCardItem(
-    maqam: Maqam,
-    onMaqamClick: (Long, String) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .size(150.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onMaqamClick(maqam.id, maqam.name) }
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Placeholder untuk gambar/ikon maqam
-            Image(
-                painter = painterResource(id = R.drawable.alfatihah), // Ganti dengan ikon Maqam
-                contentDescription = "Ikon Maqam ${maqam.name}",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(80.dp).clip(RoundedCornerShape(50))
-            )
-            Text(
-                text = maqam.name,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-    }
-}
 
 
-@Composable
-fun MaqamItem(
-    maqam: Maqam,
-    onMaqamClick: (Long, String) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onMaqamClick(maqam.id, maqam.name) }
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = maqam.name,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = maqam.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
+
