@@ -64,6 +64,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.maqradars.data.entity.User
 import com.maqradars.ui.screens.AboutScreen
+import com.maqradars.ui.screens.PrivacyPolicyScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -101,47 +102,67 @@ class MainActivity : ComponentActivity() {
             val userDao = database.userDao()
 
             if (maqamDao.getAllMaqamat().first().isEmpty()) {
-                val hijazId = maqamDao.insertMaqam(
-                    Maqam(name = "Hijaz", description = "Irama Hijaz memiliki ciri khas gerak lambat dan khas nuansa Timur Tengah. Iramanya tenang, indah, dan mendayu. Maqam ini cocok untuk ayat-ayat yang menceritakan sejarah para nabi, hukum, atau tentang kenikmatan surga.", audioPathPureMaqam = "hijaz.mp3", isFavorite = false)
-                )
-                val bayyatiId = maqamDao.insertMaqam(
-                    Maqam(name = "Bayyati", description = "Maqam yang paling sering digunakan untuk pembuka tilawah. Karakternya lembut, meliuk-liuk, dan terkesan khidmat. Sangat fleksibel dan sering dipakai untuk ayat-ayat tentang kebesaran Allah.", audioPathPureMaqam = "bayyati.mp3", isFavorite = false)
+                val bayatiId = maqamDao.insertMaqam(
+                    Maqam(name = "Bayati", description = "Maqam yang paling sering digunakan untuk pembuka tilawah. Karakternya lembut, meliuk-liuk, dan terkesan khidmat.", audioPathPureMaqam = "bayati.mp3", isFavorite = false)
                 )
                 val shobaId = maqamDao.insertMaqam(
-                    Maqam(name = "Shoba", description = "Maqam ini memiliki karakter yang ringan, cepat, dan sendu. Iramanya halus dan lembut, sering digunakan untuk melantunkan ayat-ayat yang mengandung makna kesedihan, duka cita, atau penyesalan.", audioPathPureMaqam = "shoba.mp3", isFavorite = false)
+                    Maqam(name = "Shoba", description = "Maqam ini memiliki karakter yang ringan, cepat, dan sendu. Iramanya halus dan lembut.", audioPathPureMaqam = "shoba.mp3", isFavorite = false)
+                )
+                val hijazId = maqamDao.insertMaqam(
+                    Maqam(name = "Hijaz", description = "Irama Hijaz memiliki ciri khas gerak lambat dan khas nuansa Timur Tengah. Iramanya tenang, indah, dan mendayu.", audioPathPureMaqam = "hijaz.mp3", isFavorite = false)
+                )
+                val karId = maqamDao.insertMaqam(
+                    Maqam(name = "Kar", description = "Maqam yang sering digunakan untuk transisi atau irama yang lebih dinamis.", audioPathPureMaqam = "kar.mp3", isFavorite = false)
                 )
                 val rastId = maqamDao.insertMaqam(
-                    Maqam(name = "Rast", description = "Dikenal dengan iramanya yang penuh semangat, lincah, dan tegas. Irama ini memiliki karakter yang ringan dan cepat. Sering digunakan untuk mengumandangkan azan dan menjadi pilihan untuk imam salat.", audioPathPureMaqam = "rast.mp3", isFavorite = false)
+                    Maqam(name = "Rast", description = "Dikenal dengan iramanya yang penuh semangat, lincah, dan tegas. Irama ini memiliki karakter yang ringan dan cepat.", audioPathPureMaqam = "rast.mp3", isFavorite = false)
                 )
-                val sikaId = maqamDao.insertMaqam(
-                    Maqam(name = "Sika", description = "Memiliki karakter yang lembut, khidmat, dan mendayu-dayu. Nada-nadanya cenderung bersifat riang dan cemerlang, cocok untuk ayat-ayat yang berisi harapan, doa, larangan, atau perintah.", audioPathPureMaqam = "sika.mp3", isFavorite = false)
+                val shikaId = maqamDao.insertMaqam(
+                    Maqam(name = "Sika", description = "Memiliki karakter yang lembut, khidmat, dan mendayu-dayu. Nada-nadanya cenderung bersifat riang dan cemerlang.", audioPathPureMaqam = "sika.mp3", isFavorite = false)
                 )
                 val jiharkahId = maqamDao.insertMaqam(
-                    Maqam(name = "Jiharkah", description = "Maqam ini memiliki karakter manis dan terkesan dalam. Iramanya dimulai dengan suara minor yang khas, lalu dilanjutkan dengan nada yang tinggi. Irama ini sering dilantunkan saat takbiran hari raya.", audioPathPureMaqam = "jiharkah.mp3", isFavorite = false)
+                    Maqam(name = "Jiharkah", description = "Maqam ini memiliki karakter manis dan terkesan dalam. Iramanya dimulai dengan suara minor yang khas.", audioPathPureMaqam = "jiharkah.mp3", isFavorite = false)
                 )
                 val nahawandId = maqamDao.insertMaqam(
-                    Maqam(name = "Nahawand", description = "Memiliki nada yang indah, lembut, dan romantis. Karakter iramanya cenderung melankolis, sehingga sering digunakan pada ayat-ayat Al-Qur'an yang memiliki nuansa sedih atau kecintaan kepada Allah.", audioPathPureMaqam = "nahawand.mp3", isFavorite = false)
+                    Maqam(name = "Nahawand", description = "Memiliki nada yang indah, lembut, dan romantis. Karakter iramanya cenderung melankolis.", audioPathPureMaqam = "nahawand.mp3", isFavorite = false)
                 )
 
-                val bayatiHusainiId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(maqamId = bayyatiId, variantName = "Husaini", description = "Nuansa yang lebih lembut dan tenang. Sering digunakan untuk ayat-ayat tentang doa dan munajat.", audioPath = "bayati_husaini.mp3")
-                )
-                val bayatiSyuriId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(maqamId = bayyatiId, variantName = "Syuri", description = "Irama yang lebih cepat, energik, dan tegas. Sering dipakai untuk ayat-ayat yang memuat perintah atau larangan.", audioPath = "bayati_syuri.mp3")
-                )
-                val bayatiNawaId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(maqamId = bayyatiId, variantName = "Nawa", description = "Varian dengan nada menengah yang stabil, sering menjadi jembatan antara nada awal dan nada tinggi.", audioPath = "bayati_nawa.mp3")
-                )
-                val bayatiKurdId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(maqamId = bayyatiId, variantName = "Kurd", description = "Perpaduan Bayyati dengan Maqam Kurd, menciptakan irama yang unik dengan nuansa sedikit melankolis.", audioPath = "bayati_kurd.mp3")
-                )
-                ayatExampleDao.insertAyatExample(
-                    AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 1, arabicText = "بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ", translationText = "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.", audioPath = "alfatihah_1")
-                )
-                ayatExampleDao.insertAyatExample(
-                    AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2")
-                )
+                val bayatiQararId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Qarar", description = "Nada dasar yang stabil.", audioPath = "bayati_qarar.mp3"))
+                val bayatiNawaId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Nawa", description = "Nada menengah yang stabil, sering menjadi jembatan antara nada awal dan nada tinggi.", audioPath = "bayati_nawa.mp3"))
+                val bayatiSuriId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Suri", description = "Irama Bayati yang lebih cepat, energik, dan tegas.", audioPath = "bayati_suri.mp3"))
+                val bayatiHusainiId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Husaini", description = "Nuansa yang lebih lembut dan tenang. Sering digunakan untuk doa.", audioPath = "bayati_husaini.mp3"))
+                val bayatiJawabId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Jawab", description = "Nada jawaban, melantunkan dengan suara yang lebih tinggi.", audioPath = "bayati_jawab.mp3"))
+                val bayatiAsliJawabId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Asli Jawab", description = "Nada jawaban asli yang lebih fokus dan stabil.", audioPath = "bayati_aslijawab.mp3"))
+                val bayatiSuriJawabJawabId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Suri Jawab Jawab", description = "Varian Suri dengan nada jawaban yang berulang.", audioPath = "bayati_surijawabjawab.mp3"))
+                val bayatiAkhirQuflahId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = bayatiId, variantName = "Akhir Quflah", description = "Varian penutup yang mengunci irama.", audioPath = "bayati_akhirquflah.mp3"))
+
+                val shobaAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = shobaId, variantName = "Asli", description = "Varian Shoba asli yang sendu dan halus.", audioPath = "shoba_asli.mp3"))
+                val shobaJawabId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = shobaId, variantName = "Jawab", description = "Nada jawaban dari Shoba.", audioPath = "shoba_jawab.mp3"))
+                val shobaJawabBastanjariId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = shobaId, variantName = "Jawab ma'a Bastanjari", description = "Varian Jawab yang dikombinasikan dengan Bastanjari.", audioPath = "shoba_jawab_bastanjari.mp3"))
+
+                val hijazAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = hijazId, variantName = "Asli", description = "Varian Hijaz asli yang klasik.", audioPath = "hijaz_asli.mp3"))
+
+                val karAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = karId, variantName = "Asli", description = "Varian Kar asli.", audioPath = "kar_asli.mp3"))
+                val karKurdId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = karId, variantName = "Kurd", description = "Perpaduan Kar dengan Maqam Kurd.", audioPath = "kar_kurd.mp3"))
+
+                val rastAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = rastId, variantName = "Asli", description = "Varian Rast asli yang penuh semangat.", audioPath = "rast_asli.mp3"))
+                val rastJanjiranId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = rastId, variantName = "Janjiran", description = "Varian Rast dengan irama Janjiran.", audioPath = "rast_janjiran.mp3"))
+                val rastAlaNawaId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = rastId, variantName = "Ala Nawa", description = "Varian Rast dengan nada tinggi.", audioPath = "rast_alanawa.mp3"))
+
+                val shikaAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = shikaId, variantName = "Asli", description = "Varian Shika asli yang lembut dan riang.", audioPath = "shika_asli.mp3"))
+                val shikaMasriId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = shikaId, variantName = "Masri", description = "Varian Shika Mesir.", audioPath = "shika_masri.mp3"))
+                val shikaTurkiId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = shikaId, variantName = "Turki", description = "Varian Shika Turki.", audioPath = "shika_turki.mp3"))
+
+                val jiharkahAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = jiharkahId, variantName = "Asli", description = "Varian Jiharkah asli yang klasik.", audioPath = "jiharkah_asli.mp3"))
+                val jiharkahJawabId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = jiharkahId, variantName = "Jawab", description = "Nada jawaban dari Jiharkah.", audioPath = "jiharkah_jawab.mp3"))
+
+                val nahawandAsliId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = nahawandId, variantName = "Asli", description = "Varian Nahawand asli.", audioPath = "nahawand_asli.mp3"))
+                val nahawandJawabId = maqamVariantDao.insertMaqamVariant(MaqamVariant(maqamId = nahawandId, variantName = "Jawab", description = "Nada jawaban dari Nahawand.", audioPath = "nahawand_jawab.mp3"))
+
+                ayatExampleDao.insertAyatExample(AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 1, arabicText = "بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ", translationText = "Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.", audioPath = "alfatihah_1"))
+                ayatExampleDao.insertAyatExample(AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2"))
             }
+
 
             if (glosariumTermDao.getAllGlosariumTerms().first().isEmpty()) {
                 val glosariumTerms = listOf(
@@ -306,6 +327,9 @@ fun MaqraDarsApp(
             }
             composable("about_screen") {
                 AboutScreen(onBackClick = { navController.popBackStack() })
+            }
+            composable("privacy_policy_screen") {
+                PrivacyPolicyScreen(onBackClick = { navController.popBackStack() })
             }
         }
     }
