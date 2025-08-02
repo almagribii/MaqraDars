@@ -51,10 +51,17 @@ import androidx.compose.ui.platform.LocalContext
 import android.media.MediaPlayer
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import com.maqradars.data.entity.User
 import com.maqradars.ui.screens.AboutScreen
 
@@ -115,18 +122,16 @@ class MainActivity : ComponentActivity() {
                 val nahawandId = maqamDao.insertMaqam(
                     Maqam(name = "Nahawand", description = "Memiliki nada yang indah, lembut, dan romantis. Karakter iramanya cenderung melankolis, sehingga sering digunakan pada ayat-ayat Al-Qur'an yang memiliki nuansa sedih atau kecintaan kepada Allah.", audioPathPureMaqam = "nahawand.mp3", isFavorite = false)
                 )
+
                 val bayatiHusainiId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(maqamId = bayyatiId, variantName = "Husaini", description = "Nuansa yang lebih lembut dan tenang. Sering digunakan untuk ayat-ayat tentang doa dan munajat.", audioPath = "bayati_husaini.mp3")
                 )
-
                 val bayatiSyuriId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(maqamId = bayyatiId, variantName = "Syuri", description = "Irama yang lebih cepat, energik, dan tegas. Sering dipakai untuk ayat-ayat yang memuat perintah atau larangan.", audioPath = "bayati_syuri.mp3")
                 )
-
                 val bayatiNawaId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(maqamId = bayyatiId, variantName = "Nawa", description = "Varian dengan nada menengah yang stabil, sering menjadi jembatan antara nada awal dan nada tinggi.", audioPath = "bayati_nawa.mp3")
                 )
-
                 val bayatiKurdId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(maqamId = bayyatiId, variantName = "Kurd", description = "Perpaduan Bayyati dengan Maqam Kurd, menciptakan irama yang unik dengan nuansa sedikit melankolis.", audioPath = "bayati_kurd.mp3")
                 )
@@ -136,18 +141,81 @@ class MainActivity : ComponentActivity() {
                 ayatExampleDao.insertAyatExample(
                     AyatExample(maqamVariantId = bayatiNawaId, surahNumber = 1, ayatNumber = 2, arabicText = "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ", translationText = "Segala puji bagi Allah, Tuhan seluruh alam,", audioPath = "alfatihah_2")
                 )
-                glosariumTermDao.insertGlosariumTerm(
-                    GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran.")
+            }
+
+            if (glosariumTermDao.getAllGlosariumTerms().first().isEmpty()) {
+                val glosariumTerms = listOf(
+                    GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama yang digunakan dalam pembacaan Al-Quran."),
+                    GlosariumTerm(term = "Maqam Bayati", definition = "Maqam dasar yang paling umum, berkarakter lembut dan khidmat."),
+                    GlosariumTerm(term = "Maqam Hijaz", definition = "Maqam dengan nuansa sedih, cocok untuk ayat-ayat yang membangkitkan perasaan duka."),
+                    GlosariumTerm(term = "Maqam Nahawand", definition = "Maqam yang melodis dan romantis, sering digunakan pada ayat-ayat penuh cinta atau kesedihan."),
+                    GlosariumTerm(term = "Maqam Rast", definition = "Maqam yang tegas dan penuh semangat, sering digunakan untuk azan."),
+                    GlosariumTerm(term = "Maqam Sika", definition = "Maqam yang lembut dan riang, memberikan kesan keindahan dan keluhuran."),
+                    GlosariumTerm(term = "Maqam Shoba", definition = "Maqam dengan irama sendu yang halus, cocok untuk ayat-ayat penyesalan."),
+                    GlosariumTerm(term = "Maqam Jiharkah", definition = "Maqam yang ceria dan penuh semangat, sering dilantunkan saat takbiran."),
+                    GlosariumTerm(term = "Hukum Nun Mati", definition = "Aturan bacaan yang berlaku saat huruf nun mati (نْ) atau tanwin bertemu huruf hijaiyah tertentu."),
+                    GlosariumTerm(term = "Izhar Halqi", definition = "Membaca nun mati/tanwin dengan jelas tanpa dengung saat bertemu huruf tenggorokan (أ, ه, ع, ح, غ, خ)."),
+                    GlosariumTerm(term = "Idgham Bighunnah", definition = "Meleburkan nun mati/tanwin ke huruf (ي, ن, م, و) dengan dengung, sepanjang dua harakat."),
+                    GlosariumTerm(term = "Idgham Bilaghunnah", definition = "Meleburkan nun mati/tanwin ke huruf (ل, ر) tanpa dengung."),
+                    GlosariumTerm(term = "Iqlab", definition = "Mengganti bunyi nun mati/tanwin menjadi mim (م) saat bertemu huruf ba (ب)."),
+                    GlosariumTerm(term = "Ikhfa' Haqiqi", definition = "Menyamarkan nun mati/tanwin dengan dengung saat bertemu 15 huruf hijaiyah lainnya."),
+                    GlosariumTerm(term = "Hukum Mim Mati", definition = "Aturan bacaan yang berlaku saat huruf mim mati (مْ) bertemu huruf hijaiyah tertentu."),
+                    GlosariumTerm(term = "Ikhfa' Syafawi", definition = "Mim mati (مْ) bertemu ba (ب), dibaca samar dengan dengung, sepanjang dua harakat."),
+                    GlosariumTerm(term = "Idgham Mitslain", definition = "Mim mati (مْ) bertemu mim (م), dibaca dengung dengan tasydid."),
+                    GlosariumTerm(term = "Izhar Syafawi", definition = "Mim mati (مْ) bertemu huruf selain mim dan ba, dibaca jelas tanpa dengung."),
+                    GlosariumTerm(term = "Hukum Mad (Panjang Pendek)", definition = "Aturan panjang-pendeknya bacaan dalam Al-Quran."),
+                    GlosariumTerm(term = "Mad Thabi'i", definition = "Mad asli dengan panjang dua harakat."),
+                    GlosariumTerm(term = "Mad Far'i", definition = "Mad cabang yang memiliki banyak jenis, dengan panjang lebih dari dua harakat."),
+                    GlosariumTerm(term = "Mad Wajib Muttasil", definition = "Mad yang diikuti hamzah dalam satu kata, dibaca empat atau lima harakat."),
+                    GlosariumTerm(term = "Mad Jaiz Munfasil", definition = "Mad yang diikuti hamzah di kata yang berbeda, dibaca dua, empat, atau lima harakat."),
+                    GlosariumTerm(term = "Mad Lazim", definition = "Mad yang harus dibaca panjang enam harakat karena bertemu sukun asli."),
+                    GlosariumTerm(term = "Mad 'Arid Lissukun", definition = "Mad thabi'i yang diikuti huruf sukun karena waqaf, dibaca dua, empat, atau enam harakat."),
+                    GlosariumTerm(term = "Mad Lin", definition = "Mad yang terjadi ketika huruf wawu atau ya sukun didahului huruf berharakat fathah."),
+                    GlosariumTerm(term = "Mad Badal", definition = "Mad yang terjadi dari hamzah bertemu alif, dibaca dua harakat."),
+                    GlosariumTerm(term = "Mad Silah Qasirah", definition = "Mad pada ha dhomir yang tidak diikuti hamzah, dibaca dua harakat."),
+                    GlosariumTerm(term = "Mad Silah Tawilah", definition = "Mad pada ha dhomir yang diikuti hamzah, dibaca empat atau lima harakat."),
+                    GlosariumTerm(term = "Hukum Ro'", definition = "Aturan tebal-tipisnya bacaan huruf Ro' (ر)."),
+                    GlosariumTerm(term = "Ro' Tebal", definition = "Ro' dibaca tebal (tafkhim) dalam kondisi tertentu."),
+                    GlosariumTerm(term = "Ro' Tipis", definition = "Ro' dibaca tipis (tarqiq) dalam kondisi tertentu."),
+                    GlosariumTerm(term = "Lafadz Allah", definition = "Cara membaca lafadz Allah (لله) dengan tebal atau tipis."),
+                    GlosariumTerm(term = "Sifatul Huruf", definition = "Karakteristik atau sifat-sifat yang dimiliki oleh setiap huruf hijaiyah."),
+                    GlosariumTerm(term = "Hams", definition = "Sifat huruf yang dibaca dengan suara berbisik dan mengeluarkan udara."),
+                    GlosariumTerm(term = "Jahr", definition = "Sifat huruf yang dibaca dengan suara kuat dan tidak mengeluarkan udara."),
+                    GlosariumTerm(term = "Syiddah", definition = "Sifat huruf yang ditahan suaranya saat diucapkan."),
+                    GlosariumTerm(term = "Rakhawah", definition = "Sifat huruf yang suaranya mengalir saat diucapkan."),
+                    GlosariumTerm(term = "Isti'la", definition = "Sifat huruf yang pangkal lidah naik ke langit-langit saat diucapkan (tebal)."),
+                    GlosariumTerm(term = "Istifal", definition = "Sifat huruf yang pangkal lidah turun saat diucapkan (tipis)."),
+                    GlosariumTerm(term = "Makhrajul Huruf", definition = "Tempat keluarnya suara atau huruf hijaiyah dari organ-organ bicara."),
+                    GlosariumTerm(term = "Al-Jauf", definition = "Makhraj dari rongga mulut dan tenggorokan."),
+                    GlosariumTerm(term = "Al-Halq", definition = "Makhraj dari tenggorokan."),
+                    GlosariumTerm(term = "Al-Lisan", definition = "Makhraj dari lidah."),
+                    GlosariumTerm(term = "As-Syafatan", definition = "Makhraj dari bibir."),
+                    GlosariumTerm(term = "Al-Khaisyum", definition = "Makhraj dari pangkal hidung."),
+                    GlosariumTerm(term = "Waqaf", definition = "Tanda berhenti dalam membaca Al-Quran."),
+                    GlosariumTerm(term = "Ibtida'", definition = "Aturan memulai kembali bacaan setelah berhenti."),
+                    GlosariumTerm(term = "Waqaf Lazim", definition = "Tanda berhenti yang harus dihentikan."),
+                    GlosariumTerm(term = "Waqaf Jaiz", definition = "Tanda berhenti yang boleh dihentikan atau diteruskan."),
+                    GlosariumTerm(term = "Tafkhim", definition = "Hukum bacaan yang melafalkan huruf dengan suara tebal."),
+                    GlosariumTerm(term = "Tarqiq", definition = "Hukum bacaan yang melafalkan huruf dengan suara tipis."),
+                    GlosariumTerm(term = "Ikhfa' Syafawi", definition = "Mim mati (مْ) bertemu ba (ب), dibaca samar dengan dengung, sepanjang dua harakat."),
+                    GlosariumTerm(term = "Idgham Mitslain", definition = "Mim mati (مْ) bertemu mim (م), dibaca dengung dengan tasydid."),
+                    GlosariumTerm(term = "Izhar Syafawi", definition = "Mim mati (مْ) bertemu huruf selain mim dan ba, dibaca jelas tanpa dengung."),
+                    GlosariumTerm(term = "Tarteel", definition = "Membaca Al-Quran dengan perlahan, tenang, dan jelas, sesuai dengan aturan tajwid."),
+                    GlosariumTerm(term = "Murattal", definition = "Gaya pembacaan yang lambat dan fokus pada kejelasan tajwid."),
+                    GlosariumTerm(term = "Mujawwad", definition = "Gaya pembacaan yang menggunakan teknik vokal dan irama (maqam) yang indah."),
+                    GlosariumTerm(term = "Qari'", definition = "Sebutan untuk orang yang membaca Al-Quran."),
+                    GlosariumTerm(term = "Rawi", definition = "Orang yang meriwayatkan bacaan Al-Quran."),
+                    GlosariumTerm(term = "Isti'adzah", definition = "Mengucapkan 'A'udzubillah...' sebelum memulai bacaan Al-Quran."),
+                    GlosariumTerm(term = "Basmalah", definition = "Mengucapkan 'Bismillahirrahmanirrahim...' di awal setiap surah, kecuali Surah At-Taubah.")
                 )
-                glosariumTermDao.insertGlosariumTerm(
-                    GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca huruf-huruf Al-Quran dengan benar.")
-                )
+                glosariumTermDao.insertAll(glosariumTerms)
             }
             if (userDao.getSingleUser().first() == null) {
                 userDao.insertUser(User(username = "default_user", isDarkMode = isSystemInDarkMode))
             }
         }
     }
+
 }
 
 sealed class Screen(val route: String, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
@@ -249,36 +317,137 @@ fun MaqamListScreen(
     viewModel: MaqamViewModel,
     onMaqamClick: (Long, String) -> Unit
 ) {
-    val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList<Maqam>())
-    val coroutineScope = rememberCoroutineScope()
+    val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Daftar Maqamat") },
+                title = { Text(text = "MaqraDars", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
-        },
-        floatingActionButton = {
-
         }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            items(maqamat) { maqam ->
-                MaqamItem(maqam = maqam, onMaqamClick = onMaqamClick)
+            // Bagian Sambutan
+            Text(
+                text = "Selamat datang, Almagribi!",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Bagian Belajar Maqam
+            Text(
+                text = "Pelajari Maqam",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Card(
+                modifier = Modifier.fillMaxWidth().height(150.dp)
+            ) {
+                // Di sini Anda bisa menambahkan elemen UI interaktif lainnya
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Fitur Belajar Interaktif akan hadir!",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Bagian Daftar Maqam (Horizontal Scroll)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Daftar Maqam",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                TextButton(onClick = { /* TODO: Lihat semua daftar */ }) {
+                    Text(text = "Lihat Semua")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Menggunakan LazyRow untuk tampilan horizontal
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(horizontal = 0.dp)
+            ) {
+                items(maqamat) { maqam ->
+                    MaqamCardItem(maqam = maqam, onMaqamClick = onMaqamClick)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Shortcut Glosarium
+            Card(
+                modifier = Modifier.fillMaxWidth().height(70.dp).clickable {
+                    // TODO: Navigasi ke Glosarium
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Akses Cepat: Glosarium", style = MaterialTheme.typography.titleMedium)
+                }
             }
         }
     }
 }
+
+@Composable
+fun MaqamCardItem(
+    maqam: Maqam,
+    onMaqamClick: (Long, String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .size(150.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onMaqamClick(maqam.id, maqam.name) }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Placeholder untuk gambar/ikon maqam
+            Image(
+                painter = painterResource(id = R.drawable.alfatihah), // Ganti dengan ikon Maqam
+                contentDescription = "Ikon Maqam ${maqam.name}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(80.dp).clip(RoundedCornerShape(50))
+            )
+            Text(
+                text = maqam.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    }
+}
+
 
 @Composable
 fun MaqamItem(

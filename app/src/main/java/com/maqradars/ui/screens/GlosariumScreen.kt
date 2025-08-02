@@ -5,6 +5,8 @@ package com.maqradars.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,26 +15,67 @@ import androidx.compose.ui.unit.dp
 import com.maqradars.data.entity.GlosariumTerm
 import com.maqradars.ui.theme.MaqraDarsTheme
 import com.maqradars.ui.viewmodel.MaqamViewModel
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material.icons.filled.Close
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GlosariumScreen(viewModel: MaqamViewModel) {
+    var searchQuery by remember { mutableStateOf("") }
+
     val glosariumTerms by viewModel.allGlosariumTerms.collectAsState(initial = emptyList())
+    val filteredTerms = glosariumTerms.filter {
+        it.term.contains(searchQuery, ignoreCase = true) || it.definition.contains(searchQuery, ignoreCase = true)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Glosarium") }
+                title = { Text(text = "Glosarium") },
+                actions = {
+                    IconButton(onClick = { searchQuery = "" }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Hapus pencarian"
+                        )
+                    }
+                }
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues).fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            items(glosariumTerms) { term ->
-                GlosariumItem(term = term)
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Cari istilah...") },
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(filteredTerms) { term ->
+                    GlosariumItem(term = term)
+                    Divider()
+                }
             }
         }
     }
@@ -40,13 +83,20 @@ fun GlosariumScreen(viewModel: MaqamViewModel) {
 
 @Composable
 fun GlosariumItem(term: GlosariumTerm) {
-    Card(
+    Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = term.term, style = MaterialTheme.typography.titleLarge)
-            Text(text = term.definition, style = MaterialTheme.typography.bodyMedium)
-        }
+        Text(
+            text = term.term,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = term.definition,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -58,14 +108,14 @@ fun GlosariumItem(term: GlosariumTerm) {
 //            GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran."),
 //            GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca Al-Quran dengan benar.")
 //        )
-//        // Preview dengan data dummy
 //        LazyColumn(
 //            modifier = Modifier.fillMaxSize(),
 //            contentPadding = PaddingValues(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(8.dp)
+//            verticalArrangement = Arrangement.spacedBy(16.dp)
 //        ) {
 //            items(dummyTerms) { term ->
 //                GlosariumItem(term = term)
+//                Divider()
 //            }
 //        }
 //    }
