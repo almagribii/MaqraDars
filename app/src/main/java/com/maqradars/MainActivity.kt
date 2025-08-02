@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.maqradars.data.entity.User
 import com.maqradars.ui.screens.AboutScreen
 import com.maqradars.ui.screens.PrivacyPolicyScreen
@@ -77,6 +78,7 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         val isSystemInDarkMode = (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         addInitialData(isSystemInDarkMode)

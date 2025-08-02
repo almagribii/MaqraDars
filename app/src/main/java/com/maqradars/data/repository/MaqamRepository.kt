@@ -72,4 +72,8 @@ class MaqamRepository(
     suspend fun updateUser(user: User) {
         userDao.updateUser(user)
     }
+
+    suspend fun updateMaqam(maqam: Maqam){
+        maqamDao.updateMaqam(maqam)
+    }
 }

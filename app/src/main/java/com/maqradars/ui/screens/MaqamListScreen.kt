@@ -13,13 +13,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,6 +35,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,10 +45,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.maqradars.R
+import com.maqradars.ui.screens.GlosariumItem
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,9 +60,16 @@ fun MaqamListScreen(
     onMaqamClick: (Long, String) -> Unit,
     // Parameter padding untuk menampung nilai dari Scaffold di luar
     contentPadding: PaddingValues
+
 ) {
     val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList())
 
+    var searchQuery by remember { mutableStateOf("") }
+
+    val glosariumTerms by viewModel.allGlosariumTerms.collectAsState(initial = emptyList())
+    val filteredMaqamat = maqamat.filter {
+        it.name.contains(searchQuery, ignoreCase = true) || it.description.contains(searchQuery, ignoreCase = true)
+    }
     // Hapus Scaffold di sini
     Column(
         modifier = Modifier
@@ -58,12 +77,30 @@ fun MaqamListScreen(
             // Gunakan padding yang diterima dari parameter
             .padding(contentPadding)
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Cari maqam...") },
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
+            )
+
+
+        }
 
         Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 30.dp, vertical = 20.dp),
+                .padding(horizontal = 12.dp, vertical = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Banner
@@ -76,13 +113,15 @@ fun MaqamListScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFFD2E8FF), shape = RoundedCornerShape(12.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(12.dp))
                         .zIndex(1f)
                 ) {
                     Text(
-                        text = "Ayo Hitung \n Pecahan !",
-                        color = Color(0xFFFBA834),
-                        fontSize = 30.sp,
+                        text = "Ayo Belajar \n Irama Al-Quran",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
@@ -111,6 +150,7 @@ fun MaqamListScreen(
             ) {
                 Text(
                     text = "Daftar Maqam",
+                    fontSize = 20.sp,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -126,7 +166,7 @@ fun MaqamListScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(horizontal = 0.dp)
             ) {
-                items(maqamat) { maqam ->
+                items(filteredMaqamat) { maqam ->
                     MaqamCardItem(maqam = maqam, onMaqamClick = onMaqamClick)
                 }
             }

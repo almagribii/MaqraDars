@@ -66,4 +66,14 @@ class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
     suspend fun insertGlosariumTerm(term: GlosariumTerm) {
         // Implementasi opsional
     }
+
+    fun toggleFavorite(maqamId: Long) {
+        viewModelScope.launch {
+            val maqam = repository.getMaqamById(maqamId)
+            if (maqam != null) {
+                val updatedMaqam = maqam.copy(isFavorite = !maqam.isFavorite)
+                repository.updateMaqam(updatedMaqam)
+            }
+        }
+    }
 }
