@@ -2,6 +2,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,17 +22,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.maqradars.R
 import com.maqradars.data.entity.Maqam
 
 @Composable
 fun MaqamCardItem(
     maqam: Maqam,
-    onMaqamClick: (Long, String) -> Unit
+    onMaqamClick: (Long, String) -> Unit,
 ) {
     Card(
         modifier = Modifier
-            .size(150.dp)
+            .size(110.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onMaqamClick(maqam.id, maqam.name) }
     ) {
@@ -54,15 +56,18 @@ fun MaqamCardItem(
                 painter = painterResource(id = imageResId),
                 contentDescription = "Ikon Maqam ${maqam.name}",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(80.dp).clip(RoundedCornerShape(50))
+                modifier = Modifier.size(60.dp).clip(RoundedCornerShape(50))
             )
             Text(
                 text = maqam.name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
                 modifier = Modifier.padding(top = 8.dp)
             )
+
         }
+
     }
 }
 

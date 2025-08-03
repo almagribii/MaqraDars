@@ -1,7 +1,9 @@
+import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -16,6 +18,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,6 +42,7 @@ fun MaqraDarsApp(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -51,18 +55,27 @@ fun MaqraDarsApp(
                         titleContentColor = MaterialTheme.colorScheme.primary
                     ),
                     actions = {
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = {
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, "Ayo Pelajari Maqam Tilawah")
+                                type = "text/plain"
+                            }
+
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+                            context.startActivity(shareIntent)
+                        }) {
                             Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = "Favorite",
+                                imageVector = Icons.Filled.Share,
+                                contentDescription = "Bagikan Aplikasi",
                                 tint = MaterialTheme.colorScheme.primary
                             )
 
                         }
-                        IconButton(onClick = { /* Handle klik ikon kedua */ }) {
+                        IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                             Icon(
-                                imageVector = Icons.Filled.Share,
-                                contentDescription = "Bagikan",
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = "Pengaturan",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
