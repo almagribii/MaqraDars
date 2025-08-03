@@ -86,7 +86,7 @@ fun AskQoriScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .padding(bottom = 28.dp),
+                    .padding(bottom = 200.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
