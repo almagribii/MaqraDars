@@ -3,6 +3,7 @@
 package com.maqradars.ui.screens
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,22 +25,43 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.maqradars.Screen
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(viewModel: MaqamViewModel, navController: NavController) {
     val user by viewModel.user.collectAsState(initial = null)
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Pengaturan", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+            // Tampilkan TopAppBar hanya di layar MaqamList
+                TopAppBar(
+                    title = { Text(text = "Pengaturan", fontWeight = FontWeight.Bold) },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    actions = {
+                        IconButton(onClick = {(context as? Activity)?.finish()}) {
+                            Icon(
+                                imageVector = Icons.Filled.ExitToApp,
+                                contentDescription = "Keluar Aplikasi",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
+                        }
+                        IconButton(onClick = { navController.navigate("about_screen") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = "Exit",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 )
-            )
+
         }
     ){ paddingValues ->
         Column(

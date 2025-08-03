@@ -150,7 +150,7 @@ fun MaqraDarsApp(
                 TilawahScreen(surahName = surahName, onBackClick = { navController.popBackStack() })
             }
             composable(Screen.Glosarium.route) {
-                GlosariumScreen(viewModel = viewModel)
+                GlosariumScreen(viewModel = viewModel, navController = navController)
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(viewModel = viewModel, navController = navController) // <-- PERBAIKAN DI SINI
