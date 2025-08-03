@@ -85,7 +85,7 @@ fun MaqamListScreen(
                     .height(210.dp)
                     .padding(horizontal = 14.dp, vertical = 15.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.tertiary,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .graphicsLayer { clip = false }

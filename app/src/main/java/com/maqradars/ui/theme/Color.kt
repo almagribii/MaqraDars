@@ -45,6 +45,7 @@ val GoldOnSecondaryDark = Color(0xFF17420D)
 val GoldSecondaryContainerDark = Color(0xFF2D3A32)
 val GoldOnSecondaryContainerDark = Color(0xFFFFFBEA)
 
+//werna bener
 val BrownTertiaryDark = Color(0xFFFFFFFF)
 val BrownOnTertiaryDark = Color(0xFF3A1800)
 val BrownTertiaryContainerDark = Color(0xFF5A2A0A)
