@@ -18,7 +18,7 @@ val GoldSecondaryContainerLight = Color(0xFF8ABD9D)
 val GoldOnSecondaryContainerLight = Color(0xFF2C1900)
 
 // Warna Tersier (Merah Bata/Cokelat)
-val BrownTertiaryLight = Color(0xFF8B4513) // Cokelat tua
+val BrownTertiaryLight = Color(0xFF116530) // Cokelat tua
 val BrownOnTertiaryLight = Color(0xFFFFFFFF)
 val BrownTertiaryContainerLight = Color(0xFFFFDBCA)
 val BrownOnTertiaryContainerLight = Color(0xFF331100)
@@ -45,7 +45,8 @@ val GoldOnSecondaryDark = Color(0xFF17420D)
 val GoldSecondaryContainerDark = Color(0xFF2D3A32)
 val GoldOnSecondaryContainerDark = Color(0xFFFFFBEA)
 
-val BrownTertiaryDark = Color(0xFFFFA500)
+//werna bener
+val BrownTertiaryDark = Color(0xFFFFFFFF)
 val BrownOnTertiaryDark = Color(0xFF3A1800)
 val BrownTertiaryContainerDark = Color(0xFF5A2A0A)
 val BrownOnTertiaryContainerDark = Color(0xFFFFDBCA)
