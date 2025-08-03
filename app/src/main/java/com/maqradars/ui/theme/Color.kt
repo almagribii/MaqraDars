@@ -5,7 +5,7 @@ package com.maqradars.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Warna Utama (Hijau)
-val GreenPrimaryLight = Color(0xFF2A332E)
+val GreenPrimaryLight = Color(0xFF116530)
 val GreenOnPrimaryLight = Color(0xFFFFFFFF)
 val GreenPrimaryContainerLight = Color(0xFFC8E6C9)
 val GreenOnPrimaryContainerLight = Color(0xFF002203)
@@ -13,7 +13,8 @@ val GreenOnPrimaryContainerLight = Color(0xFF002203)
 // Warna Sekunder (Emas/Perunggu)
 val GoldSecondaryLight = Color(0xFF774545)
 val GoldOnSecondaryLight = Color(0xFFFFFFFF)
-val GoldSecondaryContainerLight = Color(0xFFBEBEBE)
+//warna bot nav animnya
+val GoldSecondaryContainerLight = Color(0xFF8ABD9D)
 val GoldOnSecondaryContainerLight = Color(0xFF2C1900)
 
 // Warna Tersier (Merah Bata/Cokelat)
@@ -23,11 +24,14 @@ val BrownTertiaryContainerLight = Color(0xFFFFDBCA)
 val BrownOnTertiaryContainerLight = Color(0xFF331100)
 
 // Warna Latar Belakang dan Permukaan
-val BackgroundLight = Color(0xFFF7F2F9)
+val BackgroundLight = Color(0xFFFFFFFF)
 val OnBackgroundLight = Color(0xFF1C1B1F)
 val SurfaceLight = Color(0xFFFFFFFF)
+//Warna text ketika di klik
 val OnSurfaceLight = Color(0xFF1C1B1F)
-val SurfaceVariantLight = Color(0xFFE2E2E2)
+//warna card
+val SurfaceVariantLight = Color(0xFFE7F0EA)
+//warna botNav icon
 val OnSurfaceVariantLight = Color(0xFF474747)
 
 // Warna untuk mode gelap

@@ -2,6 +2,7 @@ import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -58,120 +59,118 @@ fun MaqamListScreen(
             .fillMaxSize()
             .padding(contentPadding)
     ) {
-        LazyColumn(
+        Column (
             modifier = Modifier.fillMaxSize()
 
         ) {
-            item {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = { Text("Cari maqam...") },
-                    singleLine = true,
-                    trailingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 2.dp)
-                        .height(56.dp),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    shape = RoundedCornerShape(30.dp)
-                )
-            }
+
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Cari maqam...") },
+                singleLine = true,
+                trailingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 2.dp)
+                    .height(65.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                shape = RoundedCornerShape(30.dp)
+            )
 
             // Banner
-            item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(210.dp)
+                    .padding(horizontal = 14.dp, vertical = 15.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .graphicsLayer { clip = false }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ustadzah),
+                    contentDescription = "Kid Image",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(400.dp)
+                        .align(Alignment.CenterEnd)
+                        .offset(x = (110).dp)
+                        .zIndex(5f)
+                )
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(210.dp)
-                        .padding(horizontal = 14.dp, vertical = 15.dp)
-                        .graphicsLayer { clip = false }
+                        .fillMaxSize()
+                        .zIndex(1f)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ustadzah),
-                        contentDescription = "Kid Image",
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .size(400.dp)
-                            .align(Alignment.CenterEnd)
-                            .offset(x = (110).dp)
-                            .zIndex(5f)
-                    )
-                    Box(
+                        painter = painterResource(R.drawable.bener_trans),
+                        contentDescription = "Banner",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
-//                            .background(
-//                                color = MaterialTheme.colorScheme.primary,
-//                                shape = RoundedCornerShape(12.dp)
-//                            )
-                            .zIndex(1f)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.bener),
-                            contentDescription = "Bener",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(16.dp))
-                        )
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 15.dp),
-                            horizontalAlignment = Alignment.Start // Agar semua teks rata kanan
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(bottom = 12.dp),
-                                text = "Ayo Belajar Irama!",
-                                color = Color.Black,
-                                fontSize = 24.sp, // Ukuran font untuk baris pertama
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Text(
-                                text = "Aplikasi Pembelajaran Maqam Quran dengan sistem Audio",
-                                color = Color.Black,
-                                fontSize = 14.sp, // Ukuran font untuk baris ketiga
-                                fontWeight = FontWeight.Bold, // Bisa diubah juga
-                            )
-                        }
-                    }
-
-                }
-            }
-
-            item {
-                Button(
-                    onClick = {},
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 14.dp)
-                ) {
-                    Icon(Icons.Default.Book, contentDescription = "Al-Quran")
-                    Text("Al-Quran")
-                }
-            }
-
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Daftar Maqam",
-                        fontSize = 20.sp,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                            .clip(RoundedCornerShape(16.dp))
                     )
-                    TextButton(onClick = onListAll) {
-                        Text(text = "Lihat Semua")
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 15.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(bottom = 12.dp),
+                            text = "Ayo Belajar Irama!",
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = "Aplikasi Pembelajaran Maqam \n Quran dengan sistem Audio",
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Image(
+                            painterResource(R.drawable.bintang5),
+                            contentDescription = "Bintang 5",
+                            modifier = Modifier.height(40.dp)
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            items(filteredMaqamat.chunked(3)) { rowItems ->
+            Button(
+                onClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp)
+            ) {
+                Icon(Icons.Default.Book, contentDescription = "Al-Quran")
+                Text("Al-Quran")
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Daftar Maqam",
+                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                TextButton(onClick = onListAll) {
+                    Text(text = "Lihat Semua")
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            filteredMaqamat.chunked(3).forEach { rowItems ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -187,7 +186,7 @@ fun MaqamListScreen(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(14.dp))
             }
         }
 
@@ -199,7 +198,6 @@ fun MaqamListScreen(
                 .size(60.dp),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
-
         ) {
             Icon(Icons.Filled.Message, contentDescription = "Tambah")
         }

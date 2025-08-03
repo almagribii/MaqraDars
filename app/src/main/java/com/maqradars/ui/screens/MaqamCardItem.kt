@@ -39,8 +39,7 @@ fun MaqamCardItem(
             .clickable { onMaqamClick(maqam.id, maqam.name) }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.primary),
+            modifier = Modifier.fillMaxSize() ,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -64,9 +63,8 @@ fun MaqamCardItem(
                 text = maqam.name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
+                fontSize = 15.sp,
                 modifier = Modifier.padding(top = 8.dp),
-                color = MaterialTheme.colorScheme.onPrimary
             )
 
         }
