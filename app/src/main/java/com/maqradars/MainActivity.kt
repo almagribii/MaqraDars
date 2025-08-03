@@ -57,6 +57,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -67,7 +68,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.maqradars.data.entity.User
-import com.maqradars.ui.screens.AboutScreen
 import com.maqradars.ui.screens.PrivacyPolicyScreen
 
 class MainActivity : ComponentActivity() {
@@ -248,6 +248,7 @@ sealed class Screen(val route: String, val title: String, val icon: androidx.com
     data object MaqamList : Screen("maqam_list", "Maqamat", Icons.Default.Home)
     data object Glosarium : Screen("glosarium", "Glosarium", Icons.Default.Info)
     data object Settings : Screen("settings", "Pengaturan", Icons.Default.Settings)
+    data object AskQori : Screen("ask", "Qori", Icons.Default.Message)
 }
 
 

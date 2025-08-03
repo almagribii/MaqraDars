@@ -56,6 +56,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation(libs.androidx.leanback)
     implementation(libs.glide)
+    implementation(libs.generativeai)
 
     // Room
     val roomVersion = "2.6.0" // Versi yang stabil

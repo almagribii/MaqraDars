@@ -17,6 +17,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -24,15 +25,22 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.ai.client.generativeai.Chat
+import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.content
 import com.maqradars.Screen
 import com.maqradars.ui.screens.AboutScreen
+import com.maqradars.ui.screens.AskQoriScreen
 import com.maqradars.ui.screens.GlosariumScreen
 import com.maqradars.ui.screens.MaqamDetailScreen
+import com.maqradars.ui.screens.MaqamListAllScreen
 import com.maqradars.ui.screens.PrivacyPolicyScreen
 import com.maqradars.ui.screens.RecitationTypeSelectionScreen
 import com.maqradars.ui.screens.SettingsScreen
 import com.maqradars.ui.screens.TilawahScreen
 import com.maqradars.ui.viewmodel.MaqamViewModel
+
+private const val API_KEY = "AIzaSyDW1VZe5D6vf9hyzhXm5B8PRj4pEk0YwsY"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +54,6 @@ fun MaqraDarsApp(
 
     Scaffold(
         topBar = {
-            // Tampilkan TopAppBar hanya di layar MaqamList
             if (currentRoute == Screen.MaqamList.route) {
                 TopAppBar(
                     title = { Text(text = "MaqraDars", fontWeight = FontWeight.Bold) },
@@ -119,6 +126,14 @@ fun MaqraDarsApp(
                     onMaqamClick = { maqamId, maqamName ->
                         navController.navigate("recitation_type_selection/$maqamId/$maqamName")
                     },
+                    onAskQoriClick = {
+                        navController.navigate(Screen.AskQori.route)
+                    },
+
+                    onListAll = {
+                        navController.navigate("list_all")
+                    },
+
                     contentPadding = innerPadding
                 )
             }
@@ -155,12 +170,44 @@ fun MaqraDarsApp(
             composable(Screen.Settings.route) {
                 SettingsScreen(viewModel = viewModel, navController = navController) // <-- PERBAIKAN DI SINI
             }
+
+            composable(Screen.AskQori.route) {
+                // Inisialisasi generativeModel dan chatInstance di dalam composable ini
+                val generativeModel = remember {
+                    GenerativeModel(
+                        modelName = "gemini-1.5-flash",
+                        apiKey = API_KEY,
+                        systemInstruction = content {
+                            text("Berperanlah sebagai seorang qori yang ramah, informatif, dan profesional. Berikan saran dan motivasi dalam mempelajari Al-Quran dan maknanya, jangan memberikan diagnosis atau resep spesifik, dan selalu sarankan untuk berkonsultasi langsung dengan guru jika ada keluhan serius. Setiap respons harus ringkas dan mudah dipahami. jangan bilang kamu adalah program komputer")
+                        }
+                    )
+                }
+                val chatInstance = remember { generativeModel.startChat() }
+
+                // Sekarang `chatInstance` sudah ada dan bisa diteruskan
+                AskQoriScreen(
+                    onBackClick = { navController.popBackStack() },
+                    chatInstance = chatInstance
+                )
+            }
             composable("about_screen") {
                 AboutScreen(onBackClick = { navController.popBackStack() })
             }
+
+            composable("list_all") {
+                MaqamListAllScreen(
+                    viewModel = viewModel,
+                    onBackClick = { navController.popBackStack() },
+                    onMaqamClick = { maqamId, maqamName ->
+                        navController.navigate("recitation_type_selection/$maqamId/$maqamName")
+                    }
+                )
+            }
+
             composable("privacy_policy_screen") {
                 PrivacyPolicyScreen(onBackClick = { navController.popBackStack() })
             }
+
         }
     }
 }

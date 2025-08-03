@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.maqradars.R
 import com.maqradars.data.entity.Maqam
 import com.maqradars.ui.viewmodel.MaqamViewModel
@@ -34,7 +36,10 @@ import com.maqradars.ui.viewmodel.MaqamViewModel
 fun MaqamListScreen(
     viewModel: MaqamViewModel,
     onMaqamClick: (Long, String) -> Unit,
-    contentPadding: PaddingValues
+    onAskQoriClick:() -> Unit,
+    onListAll:() -> Unit,
+    contentPadding: PaddingValues,
+
 ) {
     val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
@@ -123,7 +128,7 @@ fun MaqamListScreen(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    TextButton(onClick = { /* TODO: Navigasi ke semua daftar */ }) {
+                    TextButton(onClick = onListAll) {
                         Text(text = "Lihat Semua")
                     }
                 }
@@ -151,7 +156,7 @@ fun MaqamListScreen(
         }
 
         FloatingActionButton(
-            onClick = { /* aksi saat tombol diklik */ },
+            onClick = onAskQoriClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 16.dp, end = 16.dp)
