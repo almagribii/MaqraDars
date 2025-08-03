@@ -104,6 +104,7 @@ fun MaqamListScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .zIndex(1f)
+                        .background(color = MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(16.dp))
                 ) {
                     Image(
                         painter = painterResource(R.drawable.bener_trans),

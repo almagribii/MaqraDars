@@ -25,10 +25,12 @@ import com.maqradars.data.entity.MaqamVariant
 import com.maqradars.ui.viewmodel.MaqamViewModel
 import kotlinx.coroutines.launch
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -178,7 +180,7 @@ fun MaqamDetailScreen(
         }
     }
 }
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MaqamVariantItem(variant: MaqamVariant, isSelected: Boolean, onClick: () -> Unit) {
     Card(
@@ -191,8 +193,13 @@ fun MaqamVariantItem(variant: MaqamVariant, isSelected: Boolean, onClick: () -> 
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = variant.variantName, style = MaterialTheme.typography.titleLarge)
-            Text(text = variant.description, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(modifier = Modifier.basicMarquee(),
+                text = variant.variantName,
+                style = MaterialTheme.typography.titleLarge, maxLines = 1,
+                )
+            Text(text = variant.description,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
