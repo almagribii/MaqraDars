@@ -1,3 +1,4 @@
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -18,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -25,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.core.app.ComponentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.maqradars.R
@@ -40,10 +44,11 @@ fun MaqamListScreen(
     onListAll:() -> Unit,
     contentPadding: PaddingValues,
 
+
 ) {
     val maqamat by viewModel.allMaqamat.collectAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
-
+    val context = LocalContext.current
     val filteredMaqamat = maqamat.filter {
         it.name.contains(searchQuery, ignoreCase = true) || it.description.contains(searchQuery, ignoreCase = true)
     }
@@ -78,39 +83,70 @@ fun MaqamListScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(230.dp)
+                        .height(210.dp)
                         .padding(horizontal = 14.dp, vertical = 15.dp)
                         .graphicsLayer { clip = false }
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .zIndex(1f)
-                    ) {
-                        Text(
-                            text = "Ayo Belajar \n Irama Al-Quran",
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(end = 30.dp)
-                        )
-                    }
                     Image(
                         painter = painterResource(id = R.drawable.ustadzah),
                         contentDescription = "Kid Image",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .size(500.dp)
-                            .align(Alignment.CenterStart)
-                            .offset(x = (-80).dp)
+                            .size(400.dp)
+                            .align(Alignment.CenterEnd)
+                            .offset(x = (110).dp)
                             .zIndex(5f)
                     )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+//                            .background(
+//                                color = MaterialTheme.colorScheme.primary,
+//                                shape = RoundedCornerShape(12.dp)
+//                            )
+                            .zIndex(1f)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.bener),
+                            contentDescription = "Bener",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(16.dp))
+                        )
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .padding(start = 15.dp),
+                            horizontalAlignment = Alignment.Start // Agar semua teks rata kanan
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(bottom = 12.dp),
+                                text = "Ayo Belajar Irama!",
+                                color = Color.Black,
+                                fontSize = 24.sp, // Ukuran font untuk baris pertama
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                text = "Aplikasi Pembelajaran Maqam Quran dengan sistem Audio",
+                                color = Color.Black,
+                                fontSize = 14.sp, // Ukuran font untuk baris ketiga
+                                fontWeight = FontWeight.Bold, // Bisa diubah juga
+                            )
+                        }
+                    }
+
+                }
+            }
+
+            item {
+                Button(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 14.dp)
+                ) {
+                    Icon(Icons.Default.Book, contentDescription = "Al-Quran")
+                    Text("Al-Quran")
                 }
             }
 

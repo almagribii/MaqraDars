@@ -86,7 +86,7 @@ fun AskQoriScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .padding(bottom = 200.dp),
+                    .padding(bottom = 140.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
@@ -96,7 +96,7 @@ fun AskQoriScreen(
                     modifier = Modifier
                         .weight(1f)
                         .heightIn(min = 50.dp, max = 150.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(24.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
@@ -104,7 +104,6 @@ fun AskQoriScreen(
                     ),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
 

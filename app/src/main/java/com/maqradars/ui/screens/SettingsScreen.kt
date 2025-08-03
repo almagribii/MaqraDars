@@ -11,7 +11,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
@@ -110,6 +112,18 @@ fun SettingsScreen(viewModel: MaqamViewModel, navController: NavController) {
                 SettingsItem(
                     icon = Icons.Default.Share,
                     title = "Beri Kami Semangat",
+                    onClick = { /* TODO: Aksi untuk share atau rating */ }
+                )
+
+                SettingsItem(
+                    icon = Icons.Default.Feedback,
+                    title = "Bantuan & Masukan",
+                    onClick = { /* TODO: Aksi untuk share atau rating */ }
+                )
+
+                SettingsItem(
+                    icon = Icons.Default.Call,
+                    title = "Hubungi Kami",
                     onClick = { /* TODO: Aksi untuk share atau rating */ }
                 )
 
