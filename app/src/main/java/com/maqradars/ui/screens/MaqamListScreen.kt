@@ -84,7 +84,7 @@ fun MaqamListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(210.dp)
-                    .padding(horizontal = 14.dp, vertical = 15.dp)
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
                     .background(
                         color = MaterialTheme.colorScheme.tertiary,
                         shape = RoundedCornerShape(16.dp)
@@ -149,7 +149,6 @@ fun MaqamListScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 14.dp)
             ) {
-                Icon(Icons.Default.Book, contentDescription = "Al-Quran")
                 Text("Al-Quran")
             }
 

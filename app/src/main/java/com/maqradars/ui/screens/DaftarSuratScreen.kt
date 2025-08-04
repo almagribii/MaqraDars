@@ -9,9 +9,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,17 +29,25 @@ import kotlinx.coroutines.launch
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DaftarSuratScreen(
     onSuratClick: (Int) -> Unit,
-    onBackClick: () -> Unit // Tambahkan ini
+    onBackClick: () -> Unit
 ) {
     var daftarSurat by remember { mutableStateOf<List<Surat>>(emptyList()) }
     val coroutineScope = rememberCoroutineScope()
+    var searchQuery by remember { mutableStateOf("") }
+
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -59,10 +74,34 @@ fun DaftarSuratScreen(
                 }
             )
         }
-    ) { innerPadding ->
-        LazyColumn(contentPadding = innerPadding) {
-            items(daftarSurat) { surat ->
-                SuratItem(surat = surat, onSuratClick = onSuratClick)
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Cari surat...") },
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 10.dp)
+                    .height(56.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                shape = RoundedCornerShape(30.dp)
+            )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues( bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                items(daftarSurat) { surat ->
+                    SuratItem(surat = surat, onSuratClick = onSuratClick)
+                }
             }
         }
     }
@@ -70,14 +109,33 @@ fun DaftarSuratScreen(
 
 @Composable
 fun SuratItem(surat: Surat, onSuratClick: (Int) -> Unit) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onSuratClick(surat.nomor) } // DI SINI! Kita mengirimkan 'surat.nomor' yang bertipe Int
-            .padding(16.dp)
-            .clickable { onSuratClick(surat.nomor) }
+            .padding(start = 16.dp, end = 16.dp)
+            .clickable { onSuratClick(surat.nomor) },
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Text(text = "${surat.nomor}. ${surat.namaLatin}")
-        Text(text = surat.nama)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${surat.nomor}. ${surat.namaLatin}",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+
+            Text(
+                text = surat.nama,
+                fontSize = 20.sp,
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }

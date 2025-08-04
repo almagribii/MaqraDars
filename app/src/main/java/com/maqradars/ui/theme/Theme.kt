@@ -7,6 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import com.maqradars.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = dark_theme_primary,
@@ -60,6 +64,10 @@ fun MaqraDarsTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
+
     )
 }
+ val amiriFontFamily = FontFamily(
+    Font(R.font.amiri, FontWeight.Normal)
+)
