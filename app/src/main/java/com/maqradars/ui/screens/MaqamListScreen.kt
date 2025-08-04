@@ -42,6 +42,7 @@ fun MaqamListScreen(
     viewModel: MaqamViewModel,
     onMaqamClick: (Long, String) -> Unit,
     onAskQoriClick:() -> Unit,
+    onQuranClick: () -> Unit,
     onListAll:() -> Unit,
     contentPadding: PaddingValues,
 
@@ -143,7 +144,7 @@ fun MaqamListScreen(
             }
 
             Button(
-                onClick = {},
+                onClick = onQuranClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 14.dp)

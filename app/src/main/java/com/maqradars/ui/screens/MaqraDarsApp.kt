@@ -31,6 +31,8 @@ import com.google.ai.client.generativeai.type.content
 import com.maqradars.Screen
 import com.maqradars.ui.screens.AboutScreen
 import com.maqradars.ui.screens.AskQoriScreen
+import com.maqradars.ui.screens.DaftarSuratScreen
+import com.maqradars.ui.screens.DetailSuratScreen
 import com.maqradars.ui.screens.GlosariumScreen
 import com.maqradars.ui.screens.MaqamDetailScreen
 import com.maqradars.ui.screens.MaqamListAllScreen
@@ -133,6 +135,9 @@ fun MaqraDarsApp(
                     onListAll = {
                         navController.navigate("list_all")
                     },
+                    onQuranClick = { // <--- Tambahkan fungsi ini
+                        navController.navigate("quran_screen")
+                    },
 
                     contentPadding = innerPadding
                 )
@@ -206,6 +211,26 @@ fun MaqraDarsApp(
 
             composable("privacy_policy_screen") {
                 PrivacyPolicyScreen(onBackClick = { navController.popBackStack() })
+            }
+            composable("quran_screen") {
+                DaftarSuratScreen(
+                    onSuratClick = { nomorSurat ->
+                        navController.navigate("detail_surat/$nomorSurat")
+                    },
+                    onBackClick = { navController.popBackStack() } // Tambahkan ini
+
+                )
+            }
+
+            composable("detail_surat/{nomorSurat}") { backStackEntry ->
+                val nomorSurat = backStackEntry.arguments?.getString("nomorSurat")?.toIntOrNull()
+                if (nomorSurat != null) {
+                    DetailSuratScreen(
+                        nomorSurat = nomorSurat,
+                        onBackClick = { navController.popBackStack() } // Tambahkan ini
+                    )
+                } else {
+                }
             }
 
         }

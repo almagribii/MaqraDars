@@ -24,12 +24,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
-    // State animasi untuk alpha (transparansi) dan skala
     val alpha = remember { Animatable(0f) }
     val scale = remember { Animatable(0.5f) }
 
     LaunchedEffect(key1 = true) {
-        // Animasi Fading In dan Scaling Up
         launch {
             alpha.animateTo(
                 targetValue = 1f,
@@ -43,37 +41,35 @@ fun SplashScreen(onTimeout: () -> Unit) {
             )
         }
 
-        delay(4000) // Tunda total selama 3 detik sebelum berpindah layar
+        delay(4000)
         onTimeout()
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
-            .background(color = Color(0xFFA5D6A7)),
+            .background(color = Color(0xFF116530)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_maqradars),
+            painter = painterResource(id = R.drawable.logo_trans),
             contentDescription = "Logo MaqraDars",
-            // Terapkan modifier animasi
             modifier = Modifier
-                .size(150.dp)
+                .size(300.dp)
                 .alpha(alpha.value) // Menerapkan animasi alpha
                 .scale(scale.value) // Menerapkan animasi skala
         )
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "MaqraDars",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.alpha(alpha.value) // Teks juga ikut dianimasikan
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Belajar Maqam Al-Qur'an",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.alpha(alpha.value)
-        )
+//        Spacer(modifier = Modifier.height(8.dp))
+//        Text(
+//            text = "Belajar Maqam Al-Qur'an",
+//            style = MaterialTheme.typography.bodyLarge,
+//            modifier = Modifier.alpha(alpha.value)
+//        )
     }
 }
