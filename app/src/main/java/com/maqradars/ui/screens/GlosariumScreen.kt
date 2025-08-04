@@ -59,7 +59,6 @@ fun GlosariumScreen(viewModel: MaqamViewModel, navController: NavController) {
         )
     }
 
-    // 1. Buat instance FocusRequester
     val focusRequester = remember { FocusRequester() }
 
     Scaffold(
@@ -73,7 +72,6 @@ fun GlosariumScreen(viewModel: MaqamViewModel, navController: NavController) {
                 actions = {
                     IconButton(
                         onClick = {
-                            // 2. Panggil requestFocus() saat tombol ditekan
                             focusRequester.requestFocus()
                         }
                     ) {
@@ -106,7 +104,6 @@ fun GlosariumScreen(viewModel: MaqamViewModel, navController: NavController) {
                 label = { Text("Cari istilah...") },
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                // 3. Tambahkan Modifier.focusRequester()
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
@@ -135,22 +132,22 @@ fun GlosariumScreen(viewModel: MaqamViewModel, navController: NavController) {
 @Composable
 fun GlosariumItem(
     term: GlosariumTerm,
-    onClick: () -> Unit // Tambahkan parameter onClick
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick), // Memberikan efek klik
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(8.dp) // Sudut membulat
+        shape = RoundedCornerShape(8.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp) // Padding di dalam Card
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = term.term,
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold, // Tambahkan bold agar judul lebih menonjol
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(4.dp))
