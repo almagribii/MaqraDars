@@ -3,6 +3,8 @@
 package com.maqradars.ui.screens
 
 import android.content.Intent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,24 +30,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.maqradars.Screen
 
+// Import yang diperlukan untuk FocusRequester
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import kotlinx.coroutines.delay
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GlosariumScreen(viewModel: MaqamViewModel, navController : NavController) {
+fun GlosariumScreen(viewModel: MaqamViewModel, navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     val glosariumTerms by viewModel.allGlosariumTerms.collectAsState(initial = emptyList())
     val filteredTerms = glosariumTerms.filter {
-        it.term.contains(searchQuery, ignoreCase = true) || it.definition.contains(searchQuery, ignoreCase = true)
+        it.term.contains(searchQuery, ignoreCase = true) || it.definition.contains(
+            searchQuery,
+            ignoreCase = true
+        )
     }
+
+    // 1. Buat instance FocusRequester
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
@@ -56,7 +71,12 @@ fun GlosariumScreen(viewModel: MaqamViewModel, navController : NavController) {
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(
+                        onClick = {
+                            // 2. Panggil requestFocus() saat tombol ditekan
+                            focusRequester.requestFocus()
+                        }
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = "Cari Glosarium",
@@ -86,64 +106,59 @@ fun GlosariumScreen(viewModel: MaqamViewModel, navController : NavController) {
                 label = { Text("Cari istilah...") },
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                // 3. Tambahkan Modifier.focusRequester()
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
-                    .height(56.dp),
+                    .height(56.dp)
+                    .focusRequester(focusRequester),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 shape = RoundedCornerShape(30.dp)
             )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredTerms) { term ->
-                    GlosariumItem(term = term)
-                    Divider()
+                    GlosariumItem(
+                        term = term,
+                        onClick = {})
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun GlosariumItem(term: GlosariumTerm) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
+fun GlosariumItem(
+    term: GlosariumTerm,
+    onClick: () -> Unit // Tambahkan parameter onClick
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick), // Memberikan efek klik
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(8.dp) // Sudut membulat
     ) {
-        Text(
-            text = term.term,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = term.definition,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        Column(
+            modifier = Modifier.padding(16.dp) // Padding di dalam Card
+        ) {
+            Text(
+                text = term.term,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold, // Tambahkan bold agar judul lebih menonjol
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = term.definition,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GlosariumScreenPreview() {
-//    MaqraDarsTheme {
-//        val dummyTerms = listOf(
-//            GlosariumTerm(term = "Maqam", definition = "Tangga nada atau irama dalam pembacaan Al-Quran."),
-//            GlosariumTerm(term = "Tajwid", definition = "Ilmu yang mempelajari cara membaca Al-Quran dengan benar.")
-//        )
-//        LazyColumn(
-//            modifier = Modifier.fillMaxSize(),
-//            contentPadding = PaddingValues(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            items(dummyTerms) { term ->
-//                GlosariumItem(term = term)
-//                Divider()
-//            }
-//        }
-//    }
-//}
