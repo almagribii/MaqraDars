@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,21 +38,30 @@ fun MaqamCardItem(
             .size(110.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onMaqamClick(maqam.id, maqam.name) }
+
     ) {
         Column(
-            modifier = Modifier.fillMaxSize() ,
+            modifier = Modifier.fillMaxSize()
+            .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.tertiaryContainer,
+                            MaterialTheme.colorScheme.surface
+                        )
+                    )
+                    ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             val imageResId = when (maqam.name) {
-                "Hijaz" -> R.drawable.alfatihah
-                "Bayyati" -> R.drawable.alfatihah
-                "Shoba" -> R.drawable.alfatihah
-                "Rast" -> R.drawable.alfatihah
-                "Sika" -> R.drawable.alfatihah
-                "Jiharkah" -> R.drawable.alfatihah
-                "Nahawand" -> R.drawable.alfatihah
-                else -> R.drawable.alfatihah
+                "Hijaz" -> R.drawable.ic_hijaz
+                "Bayyati" -> R.drawable.ic_bayati
+                "Shoba" -> R.drawable.ic_sika
+                "Rast" -> R.drawable.ic_rast
+                "Sika" -> R.drawable.ic_sika
+                "Jiharkah" -> R.drawable.ic_jiharkah
+                "Nahawand" -> R.drawable.ic_nahawand
+                else -> R.drawable.ic_bayati
             }
             Image(
                 painter = painterResource(id = imageResId),

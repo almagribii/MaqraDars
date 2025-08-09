@@ -149,14 +149,14 @@ class MainActivity : ComponentActivity() {
                         isFavorite = false
                     )
                 )
-                val karId = maqamDao.insertMaqam(
-                    Maqam(
-                        name = "Kar",
-                        description = "Maqam yang sering digunakan untuk transisi atau irama yang lebih dinamis.",
-                        audioPathPureMaqam = "kar.mp3",
-                        isFavorite = false
-                    )
-                )
+//                val karId = maqamDao.insertMaqam(
+//                    Maqam(
+//                        name = "Kar",
+//                        description = "Maqam yang sering digunakan untuk transisi atau irama yang lebih dinamis.",
+//                        audioPathPureMaqam = "kar.mp3",
+//                        isFavorite = false
+//                    )
+//                )
                 val rastId = maqamDao.insertMaqam(
                     Maqam(
                         name = "Rast",
@@ -289,22 +289,22 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                val karAsliId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(
-                        maqamId = karId,
-                        variantName = "Asli",
-                        description = "Varian Kar asli.",
-                        audioPath = "kar_asli.mp3"
-                    )
-                )
-                val karKurdId = maqamVariantDao.insertMaqamVariant(
-                    MaqamVariant(
-                        maqamId = karId,
-                        variantName = "Kurd",
-                        description = "Perpaduan Kar dengan Maqam Kurd.",
-                        audioPath = "kar_kurd.mp3"
-                    )
-                )
+//                val karAsliId = maqamVariantDao.insertMaqamVariant(
+//                    MaqamVariant(
+//                        maqamId = karId,
+//                        variantName = "Asli",
+//                        description = "Varian Kar asli.",
+//                        audioPath = "kar_asli.mp3"
+//                    )
+//                )
+//                val karKurdId = maqamVariantDao.insertMaqamVariant(
+//                    MaqamVariant(
+//                        maqamId = karId,
+//                        variantName = "Kurd",
+//                        description = "Perpaduan Kar dengan Maqam Kurd.",
+//                        audioPath = "kar_kurd.mp3"
+//                    )
+//                )
 
                 val rastAsliId = maqamVariantDao.insertMaqamVariant(
                     MaqamVariant(
