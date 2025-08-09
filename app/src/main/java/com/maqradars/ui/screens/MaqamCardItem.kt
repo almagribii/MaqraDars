@@ -56,7 +56,7 @@ fun MaqamCardItem(
             val imageResId = when (maqam.name) {
                 "Hijaz" -> R.drawable.ic_hijaz
                 "Bayyati" -> R.drawable.ic_bayati
-                "Shoba" -> R.drawable.ic_sika
+                "Shoba" -> R.drawable.ic_shaba
                 "Rast" -> R.drawable.ic_rast
                 "Sika" -> R.drawable.ic_sika
                 "Jiharkah" -> R.drawable.ic_jiharkah
