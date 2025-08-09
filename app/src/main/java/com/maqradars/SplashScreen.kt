@@ -47,24 +47,24 @@ fun SplashScreen(onTimeout: () -> Unit) {
 
     Column(
         modifier = Modifier.fillMaxSize()
-            .background(color = Color(0xFF116530)),
+            .background(color = Color(0xFF000000)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_trans),
+            painter = painterResource(id = R.drawable.ic_maqradars),
             contentDescription = "Logo MaqraDars",
             modifier = Modifier
                 .size(300.dp)
                 .alpha(alpha.value) // Menerapkan animasi alpha
                 .scale(scale.value) // Menerapkan animasi skala
         )
-        Text(
-            text = "MaqraDars",
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.alpha(alpha.value) // Teks juga ikut dianimasikan
-        )
+//        Text(
+//            text = "MaqraDars",
+//            style = MaterialTheme.typography.headlineLarge,
+//            fontWeight = FontWeight.Bold,
+//            modifier = Modifier.alpha(alpha.value) // Teks juga ikut dianimasikan
+//        )
 //        Spacer(modifier = Modifier.height(8.dp))
 //        Text(
 //            text = "Belajar Maqam Al-Qur'an",
