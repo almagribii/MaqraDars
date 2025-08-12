@@ -43,7 +43,9 @@ android {
 }
 
 dependencies {
-    // BOM untuk sinkronisasi versi Compose
+    val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
 
     // Dependensi
@@ -90,4 +92,5 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
 }

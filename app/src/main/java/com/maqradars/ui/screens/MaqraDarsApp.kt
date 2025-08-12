@@ -1,8 +1,11 @@
+// app/src/main/java/com/maqradars/MaqraDarsApp.kt
+
+package com.maqradars
+
+import MaqamListScreen
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,12 +28,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.ai.client.generativeai.Chat
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
-import com.maqradars.Screen
 import com.maqradars.ui.screens.AboutScreen
 import com.maqradars.ui.screens.AskQoriScreen
+import com.maqradars.ui.screens.ContactScreen
 import com.maqradars.ui.screens.DaftarSuratScreen
 import com.maqradars.ui.screens.DetailSuratScreen
 import com.maqradars.ui.screens.GlosariumScreen
@@ -39,9 +41,11 @@ import com.maqradars.ui.screens.MaqamListAllScreen
 import com.maqradars.ui.screens.PrivacyPolicyScreen
 import com.maqradars.ui.screens.RecitationTypeSelectionScreen
 import com.maqradars.ui.screens.SettingsScreen
+import com.maqradars.ui.screens.SupportScreen
 import com.maqradars.ui.screens.TilawahScreen
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
+// Catatan: Ganti API_KEY ini dengan kunci API Anda yang sebenarnya
 private const val API_KEY = "AIzaSyDW1VZe5D6vf9hyzhXm5B8PRj4pEk0YwsY"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +58,10 @@ fun MaqraDarsApp(
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
 
+    val bottomBarItems = listOf(Screen.MaqamList, Screen.Glosarium, Screen.Settings)
+    // Logika untuk menentukan apakah bottom bar harus ditampilkan
+    val showBottomBar = bottomBarItems.any { it.route == currentRoute }
+
     Scaffold(
         topBar = {
             if (currentRoute == Screen.MaqamList.route) {
@@ -65,12 +73,11 @@ fun MaqraDarsApp(
                     ),
                     actions = {
                         IconButton(onClick = {
-                            val sendIntent: Intent = Intent().apply {
+                            val sendIntent = Intent().apply {
                                 action = Intent.ACTION_SEND
                                 putExtra(Intent.EXTRA_TEXT, "Ayo Pelajari Maqam Tilawah")
                                 type = "text/plain"
                             }
-
                             val shareIntent = Intent.createChooser(sendIntent, null)
                             context.startActivity(shareIntent)
                         }) {
@@ -79,7 +86,6 @@ fun MaqraDarsApp(
                                 contentDescription = "Bagikan Aplikasi",
                                 tint = MaterialTheme.colorScheme.primary
                             )
-
                         }
                         IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                             Icon(
@@ -93,29 +99,29 @@ fun MaqraDarsApp(
             }
         },
         bottomBar = {
-            NavigationBar {
-                val items = listOf(Screen.MaqamList, Screen.Glosarium, Screen.Settings)
-                items.forEach { screen ->
-                    NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = screen.title) },
-                        label = { Text(screen.title) },
-                        selected = currentRoute?.startsWith(screen.route) == true,
-                        onClick = {
-                            if (currentRoute?.startsWith(screen.route) == false) {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+            if (showBottomBar) {
+                NavigationBar {
+                    bottomBarItems.forEach { screen ->
+                        NavigationBarItem(
+                            icon = { Icon(screen.icon, contentDescription = screen.title) },
+                            label = { Text(screen.title) },
+                            selected = currentRoute?.startsWith(screen.route) == true,
+                            onClick = {
+                                if (currentRoute?.startsWith(screen.route) == false) {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
-
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -131,14 +137,12 @@ fun MaqraDarsApp(
                     onAskQoriClick = {
                         navController.navigate(Screen.AskQori.route)
                     },
-
                     onListAll = {
                         navController.navigate("list_all")
                     },
-                    onQuranClick = { // <--- Tambahkan fungsi ini
+                    onQuranClick = {
                         navController.navigate("quran_screen")
                     },
-
                     contentPadding = innerPadding
                 )
             }
@@ -173,11 +177,9 @@ fun MaqraDarsApp(
                 GlosariumScreen(viewModel = viewModel, navController = navController)
             }
             composable(Screen.Settings.route) {
-                SettingsScreen(viewModel = viewModel, navController = navController) // <-- PERBAIKAN DI SINI
+                SettingsScreen(viewModel = viewModel, navController = navController)
             }
-
             composable(Screen.AskQori.route) {
-                // Inisialisasi generativeModel dan chatInstance di dalam composable ini
                 val generativeModel = remember {
                     GenerativeModel(
                         modelName = "gemini-1.5-flash",
@@ -188,8 +190,6 @@ fun MaqraDarsApp(
                     )
                 }
                 val chatInstance = remember { generativeModel.startChat() }
-
-                // Sekarang `chatInstance` sudah ada dan bisa diteruskan
                 AskQoriScreen(
                     onBackClick = { navController.popBackStack() },
                     chatInstance = chatInstance
@@ -198,7 +198,6 @@ fun MaqraDarsApp(
             composable("about_screen") {
                 AboutScreen(onBackClick = { navController.popBackStack() })
             }
-
             composable("list_all") {
                 MaqamListAllScreen(
                     viewModel = viewModel,
@@ -208,31 +207,34 @@ fun MaqraDarsApp(
                     }
                 )
             }
-
             composable("privacy_policy_screen") {
                 PrivacyPolicyScreen(onBackClick = { navController.popBackStack() })
+            }
+            composable("contact_screen") {
+                ContactScreen(onBackClick = { navController.popBackStack() })
+            }
+            composable("support_screen") {
+                SupportScreen(onBackClick = { navController.popBackStack() })
             }
             composable("quran_screen") {
                 DaftarSuratScreen(
                     onSuratClick = { nomorSurat ->
                         navController.navigate("detail_surat/$nomorSurat")
                     },
-                    onBackClick = { navController.popBackStack() } // Tambahkan ini
-
+                    onBackClick = { navController.popBackStack() }
                 )
             }
-
             composable("detail_surat/{nomorSurat}") { backStackEntry ->
                 val nomorSurat = backStackEntry.arguments?.getString("nomorSurat")?.toIntOrNull()
                 if (nomorSurat != null) {
                     DetailSuratScreen(
                         nomorSurat = nomorSurat,
-                        onBackClick = { navController.popBackStack() } // Tambahkan ini
+                        onBackClick = { navController.popBackStack() }
                     )
                 } else {
+                    // Tampilkan pesan error atau kembali jika nomor surat tidak valid
                 }
             }
-
         }
     }
 }

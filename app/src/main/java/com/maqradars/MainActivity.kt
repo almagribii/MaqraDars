@@ -3,7 +3,6 @@
 package com.maqradars
 
 import MaqamListScreen
-import MaqraDarsApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

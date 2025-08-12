@@ -112,19 +112,13 @@ fun SettingsScreen(viewModel: MaqamViewModel, navController: NavController) {
                 SettingsItem(
                     icon = Icons.Default.Share,
                     title = "Beri Kami Semangat",
-                    onClick = { /* TODO: Aksi untuk share atau rating */ }
-                )
-
-                SettingsItem(
-                    icon = Icons.Default.Feedback,
-                    title = "Bantuan & Masukan",
-                    onClick = { /* TODO: Aksi untuk share atau rating */ }
+                    onClick = { navController.navigate("support_screen") }
                 )
 
                 SettingsItem(
                     icon = Icons.Default.Call,
                     title = "Hubungi Kami",
-                    onClick = { /* TODO: Aksi untuk share atau rating */ }
+                    onClick = { navController.navigate("contact_screen") }
                 )
 
                 val context = LocalContext.current
