@@ -1,6 +1,6 @@
 // app/src/main/java/com/maqradars/ui/screens/MaqamDetailScreen.kt
 
-package com.maqradars.ui.screens
+package com.maqradars.ui.screens.maqamat.list.maqam.detail
 
 import android.media.MediaPlayer
 import androidx.compose.foundation.clickable
@@ -31,9 +31,7 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.text.selection.SelectionContainer
 
 @OptIn(ExperimentalMaterial3Api::class)

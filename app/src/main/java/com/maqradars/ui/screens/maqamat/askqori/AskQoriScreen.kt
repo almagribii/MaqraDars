@@ -1,9 +1,8 @@
 // app/src/main/java/com/maqradars/ui/screens/AskQoriScreen.kt
 
-package com.maqradars.ui.screens
+package com.maqradars.ui.screens.maqamat.askqori
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

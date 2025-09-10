@@ -1,6 +1,6 @@
 // app/src/main/java/com/maqradars/ui/screens/PrivacyPolicyScreen.kt
 
-package com.maqradars.ui.screens
+package com.maqradars.ui.screens.pengaturan.menu
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,9 +22,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,14 +108,14 @@ fun HeaderSection() {
             style = MaterialTheme.typography.headlineLarge, // Ukuran lebih besar
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center // Tengahkan teks
+            textAlign = TextAlign.Center // Tengahkan teks
         )
         Text(
             text = "Aplikasi MaqraDars",
             style = MaterialTheme.typography.titleLarge, // Ukuran sedang
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f), // Warna sedikit berbeda
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -122,13 +123,13 @@ fun HeaderSection() {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 32.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
     }
 }
 
 @Composable
-fun PrivacyPolicyCard(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, content: String) {
+fun PrivacyPolicyCard(icon: ImageVector, title: String, content: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),

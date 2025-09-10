@@ -1,9 +1,6 @@
-// app/src/main/java/com/maqradars/ui/screens/AboutScreen.kt
-
-package com.maqradars.ui.screens
+package com.maqradars.ui.screens.pengaturan.menu
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -124,7 +121,6 @@ fun AboutScreen(onBackClick: () -> Unit) {
                 cardColor = MaterialTheme.colorScheme.tertiaryContainer,
                 onContactClick = {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:maqradars@gmail.com")
                     }
                     context.startActivity(Intent.createChooser(intent, "Kirim email..."))
                 }

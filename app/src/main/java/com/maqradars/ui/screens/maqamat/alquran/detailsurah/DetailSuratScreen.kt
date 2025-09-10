@@ -1,4 +1,4 @@
-package com.maqradars.ui.screens
+package com.maqradars.ui.screens.maqamat.alquran.detailsurah
 
 
 import androidx.compose.foundation.background
@@ -32,15 +32,10 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import com.maqradars.data.model_api.Ayat
 import com.maqradars.data.model_api.DetailSurat
-import com.maqradars.data.model_api.QuranApiService
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 

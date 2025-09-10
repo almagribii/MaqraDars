@@ -30,19 +30,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
-import com.maqradars.ui.screens.AboutScreen
-import com.maqradars.ui.screens.AskQoriScreen
-import com.maqradars.ui.screens.ContactScreen
-import com.maqradars.ui.screens.DaftarSuratScreen
-import com.maqradars.ui.screens.DetailSuratScreen
-import com.maqradars.ui.screens.GlosariumScreen
-import com.maqradars.ui.screens.MaqamDetailScreen
-import com.maqradars.ui.screens.MaqamListAllScreen
-import com.maqradars.ui.screens.PrivacyPolicyScreen
-import com.maqradars.ui.screens.RecitationTypeSelectionScreen
-import com.maqradars.ui.screens.SettingsScreen
-import com.maqradars.ui.screens.SupportScreen
-import com.maqradars.ui.screens.TilawahScreen
+import com.maqradars.ui.screens.pengaturan.menu.AboutScreen
+import com.maqradars.ui.screens.maqamat.askqori.AskQoriScreen
+import com.maqradars.ui.screens.pengaturan.menu.ContactScreen
+import com.maqradars.ui.screens.maqamat.alquran.DaftarSuratScreen
+import com.maqradars.ui.screens.maqamat.alquran.detailsurah.DetailSuratScreen
+import com.maqradars.ui.screens.glosarium.GlosariumScreen
+import com.maqradars.ui.screens.maqamat.list.maqam.detail.MaqamDetailScreen
+import com.maqradars.ui.screens.maqamat.list.MaqamListAllScreen
+import com.maqradars.ui.screens.pengaturan.menu.PrivacyPolicyScreen
+import com.maqradars.ui.screens.maqamat.list.maqam.RecitationTypeSelectionScreen
+import com.maqradars.ui.screens.pengaturan.SettingsScreen
+import com.maqradars.ui.screens.pengaturan.menu.SupportScreen
+import com.maqradars.ui.screens.maqamat.list.maqam.detail.TilawahScreen
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
 // Catatan: Ganti API_KEY ini dengan kunci API Anda yang sebenarnya
@@ -59,7 +59,6 @@ fun MaqraDarsApp(
     val context = LocalContext.current
 
     val bottomBarItems = listOf(Screen.MaqamList, Screen.Glosarium, Screen.Settings)
-    // Logika untuk menentukan apakah bottom bar harus ditampilkan
     val showBottomBar = bottomBarItems.any { it.route == currentRoute }
 
     Scaffold(

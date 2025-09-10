@@ -2,31 +2,17 @@
 
 package com.maqradars
 
-import MaqamListScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.maqradars.data.MaqraDarsDatabase
 import com.maqradars.data.entity.AyatExample
@@ -34,11 +20,6 @@ import com.maqradars.data.entity.GlosariumTerm
 import com.maqradars.data.entity.Maqam
 import com.maqradars.data.entity.MaqamVariant
 import com.maqradars.data.repository.MaqamRepository
-import com.maqradars.ui.screens.GlosariumScreen
-import com.maqradars.ui.screens.MaqamDetailScreen
-import com.maqradars.ui.screens.RecitationTypeSelectionScreen
-import com.maqradars.ui.screens.SettingsScreen
-import com.maqradars.ui.screens.TilawahScreen
 import com.maqradars.ui.theme.MaqraDarsTheme
 import com.maqradars.ui.viewmodel.MaqamViewModel
 import com.maqradars.ui.viewmodel.MaqamViewModelFactory
@@ -47,29 +28,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.isSystemInDarkTheme
 import android.content.res.Configuration
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalContext
-import android.media.MediaPlayer
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Message
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.maqradars.data.entity.User
-import com.maqradars.ui.screens.PrivacyPolicyScreen
 import com.maqradars.ui.screens.SplashScreen
-import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
 

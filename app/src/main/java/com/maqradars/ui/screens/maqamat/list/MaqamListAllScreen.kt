@@ -1,6 +1,6 @@
 // app/src/main/java/com/maqradars/ui/screens/MaqamAllListScreen.kt
 
-package com.maqradars.ui.screens
+package com.maqradars.ui.screens.maqamat.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
