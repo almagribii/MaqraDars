@@ -1,4 +1,3 @@
-// app/src/main/java/com/maqradars/MainActivity.kt
 
 package com.maqradars
 
@@ -86,7 +85,7 @@ class MainActivity : ComponentActivity() {
             val userDao = database.userDao()
 
             if (maqamDao.getAllMaqamat().first().isEmpty()) {
-                val bayatiId = maqamDao.insertMaqam(
+                 val bayatiId = maqamDao.insertMaqam(
                     Maqam(
                         name = "Bayati",
                         description = "Maqam yang paling sering digunakan untuk pembuka tilawah. Karakternya lembut, meliuk-liuk, dan terkesan khidmat.",
@@ -110,14 +109,6 @@ class MainActivity : ComponentActivity() {
                         isFavorite = false
                     )
                 )
-//                val karId = maqamDao.insertMaqam(
-//                    Maqam(
-//                        name = "Kar",
-//                        description = "Maqam yang sering digunakan untuk transisi atau irama yang lebih dinamis.",
-//                        audioPathPureMaqam = "kar.mp3",
-//                        isFavorite = false
-//                    )
-//                )
                 val rastId = maqamDao.insertMaqam(
                     Maqam(
                         name = "Rast",

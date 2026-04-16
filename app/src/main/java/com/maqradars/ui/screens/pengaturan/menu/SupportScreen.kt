@@ -1,9 +1,7 @@
-// app/src/main/java/com/maqradars/ui/screens/SupportScreen.kt
 
 package com.maqradars.ui.screens.pengaturan.menu
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +36,7 @@ fun SupportScreen(onBackClick: () -> Unit) {
                         )
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                     navigationIconContentColor = MaterialTheme.colorScheme.primary
                 )
@@ -52,7 +51,6 @@ fun SupportScreen(onBackClick: () -> Unit) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Panggil fungsi dengan nama yang baru
             SupportScreenHeader()
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -61,7 +59,7 @@ fun SupportScreen(onBackClick: () -> Unit) {
                 label = "Beri Kami Bintang 5",
                 description = "Nilai kami di Google Play",
                 onClick = {
-                    val uri = Uri.parse("market://details?id=" + context.packageName)
+                    val uri = "market://details?id=${context.packageName}".toUri()
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     context.startActivity(intent)
                 }
@@ -74,6 +72,7 @@ fun SupportScreen(onBackClick: () -> Unit) {
                 description = "Dapatkan update terbaru",
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = "https://www.instagram.com/maqradars/".toUri()
                     }
                     context.startActivity(intent)
                 }
@@ -86,6 +85,7 @@ fun SupportScreen(onBackClick: () -> Unit) {
                 description = "Dukung pengembangan aplikasi",
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = "https://saweria.co/almagribii".toUri()
                     }
                     context.startActivity(intent)
                 }
@@ -94,7 +94,6 @@ fun SupportScreen(onBackClick: () -> Unit) {
     }
 }
 
-// Fungsi HeaderSection diubah namanya menjadi SupportScreenHeader
 @Composable
 fun SupportScreenHeader() {
     Column(

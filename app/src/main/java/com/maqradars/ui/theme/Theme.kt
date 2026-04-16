@@ -1,8 +1,5 @@
-// app/src/main/java/com/maqradars/ui/theme/Theme.kt
-
 package com.maqradars.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -68,6 +65,15 @@ fun MaqraDarsTheme(
 
     )
 }
- val amiriFontFamily = FontFamily(
+
+val amiriFontFamily = FontFamily(
     Font(R.font.amiri, FontWeight.Normal)
 )
+
+val poppinsFontFamily = FontFamily(
+    Font(R.font.poppins, FontWeight.Normal),
+    Font(R.font.poppins_medium, FontWeight.Medium),
+    Font(R.font.poppins_semibold, FontWeight.SemiBold),
+    Font(R.font.poppins_bold, FontWeight.Bold)
+)
+

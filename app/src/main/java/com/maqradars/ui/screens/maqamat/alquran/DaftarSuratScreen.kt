@@ -188,7 +188,7 @@ fun SuratItem(surat: Surat, onSuratClick: (Int) -> Unit) {
             Text(
                 text = "${surat.nomor}. ${surat.namaLatin}",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier.weight(1f)
             )
 

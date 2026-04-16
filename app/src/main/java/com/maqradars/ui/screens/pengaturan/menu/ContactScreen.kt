@@ -1,10 +1,7 @@
-// app/src/main/java/com/maqradars/ui/screens/ContactScreen.kt
 
 package com.maqradars.ui.screens.pengaturan.menu
 
 import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,16 +15,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.maqradars.R
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +39,7 @@ fun ContactScreen(onBackClick: () -> Unit) {
                         )
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     titleContentColor = MaterialTheme.colorScheme.primary,
                     navigationIconContentColor = MaterialTheme.colorScheme.primary
                 )
@@ -70,8 +63,9 @@ fun ContactScreen(onBackClick: () -> Unit) {
                 description = "maqradars@gmail.com",
                 onClick = {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = "mailto:maqradars@gmail.com".toUri()
                     }
-                    context.startActivity(Intent.createChooser(intent, "Kirim email..."))
+                    context.startActivity(intent)
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -81,23 +75,12 @@ fun ContactScreen(onBackClick: () -> Unit) {
                 label = "Hubungi via WhatsApp",
                 description = "0822-1098-0898",
                 onClick = {
+                    val phoneNumber = "6282210980898"
                     val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = "https://wa.me/$6282210980898?text=Assalamu%20alaikum,%20saya%20ingin%20menghubungi%20MaqraDars".toUri()
                     }
                     context.startActivity(intent)
                 }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ContactButtonWithDrawableIcon(
-                drawableId = R.drawable.instagram_logo,
-                label = "Kunjungi Instagram",
-                description = "@maqradars",
-                onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                    }
-                    context.startActivity(intent)
-                },
-                iconColor = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -107,6 +90,7 @@ fun ContactScreen(onBackClick: () -> Unit) {
                 description = "Isi formulir online kami",
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = "https://docs.google.com/forms/d/e/1FAIpQLScj1O-6XhFiPVHCqw53AeONg10q4T0P8XEMmtYSjqR64kgRhg/viewform?usp=publish-editor".toUri()
                     }
                     context.startActivity(intent)
                 }
@@ -189,54 +173,3 @@ fun ContactButton(icon: ImageVector, label: String, description: String, onClick
     }
 }
 
-@Composable
-fun ContactButtonWithDrawableIcon(
-    drawableId: Int,
-    label: String,
-    description: String,
-    onClick: () -> Unit,
-    iconColor: Color
-) {
-    ElevatedButton(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        contentPadding = PaddingValues(20.dp),
-        colors = ButtonDefaults.elevatedButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = label,
-                // Baris ini mengatur ukuran ikon
-                modifier = Modifier.size(24.dp),
-                // Baris ini memastikan gambar mengisi seluruh area yang tersedia
-                contentScale = ContentScale.FillBounds,
-                colorFilter = ColorFilter.tint(iconColor)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}

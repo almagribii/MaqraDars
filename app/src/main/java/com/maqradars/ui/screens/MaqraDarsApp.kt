@@ -1,12 +1,9 @@
-// app/src/main/java/com/maqradars/MaqraDarsApp.kt
-
 package com.maqradars
 
 import MaqamListScreen
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,12 +38,11 @@ import com.maqradars.ui.screens.maqamat.list.MaqamListAllScreen
 import com.maqradars.ui.screens.pengaturan.menu.PrivacyPolicyScreen
 import com.maqradars.ui.screens.maqamat.list.maqam.RecitationTypeSelectionScreen
 import com.maqradars.ui.screens.pengaturan.SettingsScreen
-import com.maqradars.ui.screens.pengaturan.menu.SupportScreen
+import com.maqradars.ui.screens.pengaturan.menu.WebViewScreen
 import com.maqradars.ui.screens.maqamat.list.maqam.detail.TilawahScreen
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
-// Catatan: Ganti API_KEY ini dengan kunci API Anda yang sebenarnya
-private const val API_KEY = "AIzaSyDW1VZe5D6vf9hyzhXm5B8PRj4pEk0YwsY"
+private const val GEMINI_API_KEY = "AIzaSyDW1VZe5D6vf9hyzhXm5B8PRj4pEk0YwsY"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,13 +82,7 @@ fun MaqraDarsApp(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
-                        IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
-                            Icon(
-                                imageVector = Icons.Filled.Settings,
-                                contentDescription = "Pengaturan",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+
                     }
                 )
             }
@@ -173,7 +163,7 @@ fun MaqraDarsApp(
                 TilawahScreen(surahName = surahName, onBackClick = { navController.popBackStack() })
             }
             composable(Screen.Glosarium.route) {
-                GlosariumScreen(viewModel = viewModel, navController = navController)
+                GlosariumScreen(viewModel = viewModel)
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(viewModel = viewModel, navController = navController)
@@ -182,7 +172,7 @@ fun MaqraDarsApp(
                 val generativeModel = remember {
                     GenerativeModel(
                         modelName = "gemini-1.5-flash",
-                        apiKey = API_KEY,
+                        apiKey = GEMINI_API_KEY,
                         systemInstruction = content {
                             text("Berperanlah sebagai seorang qori yang ramah, informatif, dan profesional. Berikan saran dan motivasi dalam mempelajari Al-Quran dan maknanya, jangan memberikan diagnosis atau resep spesifik, dan selalu sarankan untuk berkonsultasi langsung dengan guru jika ada keluhan serius. Setiap respons harus ringkas dan mudah dipahami. jangan bilang kamu adalah program komputer")
                         }
@@ -213,7 +203,11 @@ fun MaqraDarsApp(
                 ContactScreen(onBackClick = { navController.popBackStack() })
             }
             composable("support_screen") {
-                SupportScreen(onBackClick = { navController.popBackStack() })
+                WebViewScreen(
+                    title = "Dukung Kami",
+                    url = "https://saweria.co/almagribii",
+                    onBackClick = { navController.popBackStack() }
+                )
             }
             composable("quran_screen") {
                 DaftarSuratScreen(
@@ -230,8 +224,6 @@ fun MaqraDarsApp(
                         nomorSurat = nomorSurat,
                         onBackClick = { navController.popBackStack() }
                     )
-                } else {
-                    // Tampilkan pesan error atau kembali jika nomor surat tidak valid
                 }
             }
         }

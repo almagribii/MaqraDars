@@ -1,4 +1,3 @@
-// app/src/main/java/com/maqradars/ui/screens/PrivacyPolicyScreen.kt
 
 package com.maqradars.ui.screens.pengaturan.menu
 
@@ -105,16 +104,16 @@ fun HeaderSection() {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Kebijakan Privasi",
-            style = MaterialTheme.typography.headlineLarge, // Ukuran lebih besar
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center // Tengahkan teks
+            textAlign = TextAlign.Center
         )
         Text(
             text = "Aplikasi MaqraDars",
-            style = MaterialTheme.typography.titleLarge, // Ukuran sedang
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f), // Warna sedikit berbeda
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))

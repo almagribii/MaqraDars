@@ -75,7 +75,7 @@ fun AboutScreen(onBackClick: () -> Unit) {
                     .fillMaxWidth()
                     .height(200.dp)
                     .graphicsLayer {
-                        translationY = scrollState.value * 0.5f // Efek parallax
+                        translationY = scrollState.value * 0.5f
                     },
                 contentAlignment = Alignment.Center
             ) {

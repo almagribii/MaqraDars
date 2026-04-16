@@ -1,4 +1,3 @@
-// app/src/main/java/com/maqradars/ui/viewmodel/MaqamViewModel.kt
 
 package com.maqradars.ui.viewmodel
 
@@ -42,10 +41,9 @@ class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
 
     val user: Flow<User?> = repository.getSingleUser()
 
-    // --- FUNGSI UPDATE YANG SUDAH DIPERBAIKI ---
     fun updateIsDarkMode(isDarkMode: Boolean) {
         viewModelScope.launch {
-            val user = repository.getSingleUser().firstOrNull() // Mengambil data sekali
+            val user = repository.getSingleUser().firstOrNull()
             if (user != null) {
                 val updatedUser = user.copy(isDarkMode = isDarkMode)
                 repository.updateUser(updatedUser)
@@ -53,7 +51,6 @@ class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
         }
     }
 
-    // --- AKHIR FUNGSI UPDATE YANG DIPERBAIKI ---
 
     suspend fun insertMaqamVariant(variant: MaqamVariant): Long {
         return repository.insertMaqamVariant(variant)
@@ -63,8 +60,7 @@ class MaqamViewModel(private val repository: MaqamRepository) : ViewModel() {
         return repository.insertAyatExample(ayat)
     }
 
-    suspend fun insertGlosariumTerm(term: GlosariumTerm) {
-        // Implementasi opsional
+    fun insertGlosariumTerm(term: GlosariumTerm) {
     }
 
     fun toggleFavorite(maqamId: Long) {
