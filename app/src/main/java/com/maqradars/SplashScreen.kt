@@ -1,3 +1,4 @@
+
 package com.maqradars.ui.screens
 
 import androidx.compose.animation.core.Animatable
@@ -5,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,6 +15,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.maqradars.R
 import kotlinx.coroutines.delay
@@ -42,12 +46,12 @@ fun SplashScreen(onTimeout: () -> Unit) {
 
     Column(
         modifier = Modifier.fillMaxSize()
-            .background(color = Color(0xFF000000)),
+            .background(color = Color(0xFF112F02)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_maqradars),
+            painter = painterResource(id = R.drawable.ic_maqradars_trans),
             contentDescription = "Logo MaqraDars",
             modifier = Modifier
                 .size(300.dp)
