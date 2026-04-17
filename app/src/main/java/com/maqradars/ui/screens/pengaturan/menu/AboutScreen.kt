@@ -27,6 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.maqradars.R
+import androidx.compose.ui.unit.sp
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +46,14 @@ fun AboutScreen(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tentang Aplikasi") },
+                title = {
+                    Text(
+                        text = "Tentang Aplikasi",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -53,9 +62,8 @@ fun AboutScreen(onBackClick: () -> Unit) {
                         )
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.primary
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
         }

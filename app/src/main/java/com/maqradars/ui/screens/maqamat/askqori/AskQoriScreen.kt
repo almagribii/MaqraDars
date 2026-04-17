@@ -29,13 +29,13 @@ import com.google.ai.client.generativeai.Chat
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class ChatMessage(val text: String, val isUser: Boolean, val timestamp: Long = System.currentTimeMillis())
 
-// Rate limiting - minimum 5 detik antara requests untuk menghindari quota limit
-private const val MIN_REQUEST_INTERVAL_MS = 5000L
+private const val MIN_REQUEST_INTERVAL_MS = 1000L
 private var lastRequestTime = 0L
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -289,7 +289,7 @@ private fun sendPrompt(
     applicationContext: Context,
     composableScope: CoroutineScope
 ) {
-    // Rate limiting - tunggu minimal 5 detik dari request terakhir
+    // Rate limiting - tunggu minimal 1 detik dari request terakhir
     val now = System.currentTimeMillis()
     if (now - lastRequestTime < MIN_REQUEST_INTERVAL_MS) {
         val waitTime = ((MIN_REQUEST_INTERVAL_MS - (now - lastRequestTime)) / 1000) + 1
@@ -305,40 +305,69 @@ private fun sendPrompt(
     lastRequestTime = now
 
     setIsSending(true)
+    
+    // Retry logic dengan exponential backoff - support 503 errors
     composableScope.launch(Dispatchers.IO) {
-        try {
-            val userContent = content { text(promptText) }
-            val response = chatInstance.sendMessage(userContent)
-            val generatedText = response.text
+        var retryCount = 0
+        val maxRetries = 5 // Lebih banyak retry untuk 503
+        var success = false
+        
+        while (retryCount < maxRetries && !success) {
+            try {
+                val userContent = content { text(promptText) }
+                val response = chatInstance.sendMessage(userContent)
+                val generatedText = response.text
 
-            withContext(Dispatchers.Main) {
-                if (!generatedText.isNullOrBlank()) {
-                    messages.add(ChatMessage(generatedText, false))
+                withContext(Dispatchers.Main) {
+                    if (!generatedText.isNullOrBlank()) {
+                        messages.add(ChatMessage(generatedText, false))
+                        success = true
+                    } else {
+                        messages.add(ChatMessage("Qori: Tidak ada respons dari AI.", false))
+                        success = true
+                    }
+                }
+            } catch (e: Exception) {
+                retryCount++
+                val isQuotaError = e.message?.contains("429") == true || e.message?.contains("Quota exceeded") == true
+                val isServerError = e.message?.contains("503") == true || e.message?.contains("500") == true
+                
+                if ((isQuotaError || isServerError) && retryCount < maxRetries) {
+                    // Exponential backoff - tunggu lebih lama sebelum retry
+                    val backoffTime = (3000L * retryCount) // 3s, 6s, 9s, 12s, 15s
+                    android.util.Log.d("AskQoriScreen", "Error ${if (isServerError) "503/500" else "429"}, retry #$retryCount setelah $backoffTime ms")
+                    delay(backoffTime)
                 } else {
-                    messages.add(ChatMessage("Qori: Tidak ada respons dari AI.", false))
+                    // Final error or non-retryable error
+                    withContext(Dispatchers.Main) {
+                        val errorMessage = when {
+                            isQuotaError -> 
+                                """⏳ API quota telah habis. Silakan coba lagi dalam beberapa menit.
+
+💡 Tips: Dapatkan API Key baru dari https://aistudio.google.com/app/apikey"""
+                            isServerError ->
+                                """⚠️ Server Google sedang sibuk. Mencoba lagi...
+
+Jika terus gagal, tunggu beberapa menit dan coba lagi."""
+                            e.message?.contains("403") == true -> 
+                                "❌ API Key tidak valid. Periksa kembali di local.properties"
+                            e.message?.contains("401") == true -> 
+                                "❌ Autentikasi gagal. Periksa API Key Anda."
+                            e.message?.contains("404") == true ->
+                                "❌ Model tidak ditemukan. Pastikan menggunakan model yang benar."
+                            else -> 
+                                "❌ Error: ${e.message ?: "Terjadi kesalahan yang tidak diketahui"}"
+                        }
+                        messages.add(ChatMessage("Qori: $errorMessage", false))
+                        android.util.Log.e("AskQoriScreen", "Send prompt final error after $retryCount retries", e)
+                    }
+                    success = true // Hentikan retry
                 }
             }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                val errorMessage = when {
-                    e.message?.contains("429") == true || e.message?.contains("Quota exceeded") == true -> 
-                        "Terlalu banyak request. Silakan tunggu beberapa saat sebelum mencoba lagi."
-                    e.message?.contains("403") == true -> 
-                        "Error: API Key tidak valid atau sudah expired. Periksa local.properties"
-                    e.message?.contains("401") == true -> 
-                        "Error: Autentikasi gagal. Periksa API Key Anda."
-                    e.message?.contains("500") == true -> 
-                        "Error: Server sedang bermasalah. Coba lagi nanti."
-                    else -> 
-                        "Error: ${e.message ?: "Terjadi kesalahan yang tidak diketahui"}"
-                }
-                messages.add(ChatMessage("Qori: $errorMessage", false))
-                android.util.Log.e("AskQoriScreen", "Send prompt error", e)
-            }
-        } finally {
-            withContext(Dispatchers.Main) {
-                setIsSending(false)
-            }
+        }
+
+        withContext(Dispatchers.Main) {
+            setIsSending(false)
         }
     }
 }

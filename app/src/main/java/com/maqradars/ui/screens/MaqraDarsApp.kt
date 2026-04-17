@@ -166,7 +166,7 @@ fun MaqraDarsApp(
              composable(Screen.AskQori.route) {
                  val generativeModel = remember {
                      GenerativeModel(
-                         modelName = "gemini-1.5-flash",
+                         modelName = "gemini-2.5-flash",
                          apiKey = BuildConfig.GEMINI_API_KEY,
                          systemInstruction = content {
                              text("Berperanlah sebagai seorang qori yang ramah, informatif, dan profesional. Berikan saran dan motivasi dalam mempelajari Al-Quran dan maknanya, jangan memberikan diagnosis atau resep spesifik, dan selalu sarankan untuk berkonsultasi langsung dengan guru jika ada keluhan serius. Setiap respons harus ringkas dan mudah dipahami. jangan bilang kamu adalah program komputer")

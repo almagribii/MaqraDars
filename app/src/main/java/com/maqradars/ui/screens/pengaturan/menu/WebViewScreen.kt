@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.unit.sp
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +31,14 @@ fun WebViewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title, fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -39,8 +48,7 @@ fun WebViewScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
         }

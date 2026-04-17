@@ -65,7 +65,14 @@ fun DaftarSuratScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Daftar Surat", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = "Daftar Surat",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -73,7 +80,10 @@ fun DaftarSuratScreen(
                             contentDescription = "Kembali"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             )
         }
     ) { paddingValues ->
