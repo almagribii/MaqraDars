@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,19 +28,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
+import com.maqradars.notification.NotificationHelper
+import com.maqradars.notification.NotificationScheduler
 import com.maqradars.ui.screens.pengaturan.menu.AboutScreen
 import com.maqradars.ui.screens.maqamat.askqori.AskQoriScreen
 import com.maqradars.ui.screens.pengaturan.menu.ContactScreen
 import com.maqradars.ui.screens.maqamat.alquran.DaftarSuratScreen
 import com.maqradars.ui.screens.maqamat.alquran.detailsurah.DetailSuratScreen
 import com.maqradars.ui.screens.glosarium.GlosariumScreen
-import com.maqradars.ui.screens.maqamat.list.maqam.detail.MaqamDetailScreen
 import com.maqradars.ui.screens.maqamat.list.MaqamListAllScreen
 import com.maqradars.ui.screens.pengaturan.menu.PrivacyPolicyScreen
 import com.maqradars.ui.screens.maqamat.list.maqam.RecitationTypeSelectionScreen
 import com.maqradars.ui.screens.pengaturan.SettingsScreen
 import com.maqradars.ui.screens.pengaturan.menu.WebViewScreen
-import com.maqradars.ui.screens.maqamat.list.maqam.detail.TilawahScreen
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
 private const val GEMINI_API_KEY = "AIzaSyDW1VZe5D6vf9hyzhXm5B8PRj4pEk0YwsY"
@@ -54,6 +55,19 @@ fun MaqraDarsApp(
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
 
+    // Initialize notification channel dan schedule
+    LaunchedEffect(Unit) {
+        NotificationHelper.createNotificationChannel(context)
+        
+        val sharedPref = context.getSharedPreferences("maqradars_prefs", android.content.Context.MODE_PRIVATE)
+        val notificationsEnabled = sharedPref.getBoolean("notifications_enabled", true)
+        
+        if (notificationsEnabled) {
+            NotificationScheduler.scheduleNotifications(context)
+        }
+    }
+
+    // ...existing code...
     val bottomBarItems = listOf(Screen.MaqamList, Screen.Glosarium, Screen.Settings)
     val showBottomBar = bottomBarItems.any { it.route == currentRoute }
 
@@ -141,32 +155,14 @@ fun MaqraDarsApp(
                 RecitationTypeSelectionScreen(
                     maqamId = maqamId,
                     maqamName = maqamName,
-                    onMujawwadClick = { id ->
-                        navController.navigate("maqam_detail/$id")
-                    },
-                    onTilawahClick = { surahName ->
-                        navController.navigate("tilawah_screen/$surahName")
-                    },
                     onBackClick = { navController.popBackStack() }
                 )
-            }
-            composable("maqam_detail/{maqamId}") { backStackEntry ->
-                val maqamId = backStackEntry.arguments?.getString("maqamId")?.toLongOrNull() ?: 0L
-                MaqamDetailScreen(
-                    viewModel = viewModel,
-                    maqamId = maqamId,
-                    onBackClick = { navController.popBackStack() }
-                )
-            }
-            composable("tilawah_screen/{surahName}") { backStackEntry ->
-                val surahName = backStackEntry.arguments?.getString("surahName") ?: "Tilawah"
-                TilawahScreen(surahName = surahName, onBackClick = { navController.popBackStack() })
             }
             composable(Screen.Glosarium.route) {
                 GlosariumScreen(viewModel = viewModel)
             }
             composable(Screen.Settings.route) {
-                SettingsScreen(viewModel = viewModel, navController = navController)
+                SettingsScreen(navController = navController)
             }
             composable(Screen.AskQori.route) {
                 val generativeModel = remember {

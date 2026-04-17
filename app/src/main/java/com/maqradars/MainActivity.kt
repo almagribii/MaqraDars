@@ -31,6 +31,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material.icons.filled.Message
 import com.maqradars.data.entity.User
 import com.maqradars.ui.screens.SplashScreen
+import android.os.Build
+import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
 
@@ -49,6 +51,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Request notification permission untuk Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    100
+                )
+            }
+        }
+        
         val isSystemInDarkMode =
             (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         addInitialData(isSystemInDarkMode)

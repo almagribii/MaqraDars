@@ -2,134 +2,316 @@
 
 package com.maqradars.ui.screens.maqamat.list.maqam
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Image
+import com.maqradars.R
+import kotlinx.coroutines.launch
+import java.util.Locale
+
+fun formatTime(milliseconds: Int): String {
+    val seconds = milliseconds / 1000
+    val minutes = seconds / 60
+    val secs = seconds % 60
+    return String.format(Locale.US, "%02d:%02d", minutes, secs)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecitationTypeSelectionScreen(
     maqamId: Long,
     maqamName: String,
-    onMujawwadClick: (Long) -> Unit,
-    onTilawahClick: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    val tabs = listOf("Tilawah", "Mujawwad")
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
+    var isPlaying by remember { mutableStateOf(false) }
+    var currentPosition by remember { mutableStateOf(0) }
+    var duration by remember { mutableStateOf(0) }
+
+    // Update posisi audio setiap 100ms
+    LaunchedEffect(isPlaying) {
+        while (isPlaying) {
+            mediaPlayer?.let {
+                currentPosition = it.currentPosition
+                duration = it.duration
+            }
+            kotlinx.coroutines.delay(100)
+        }
+    }
+
+    // Reset audio saat berganti tab
+    LaunchedEffect(selectedTabIndex) {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+        isPlaying = false
+        currentPosition = 0
+        duration = 0
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Pilih Bacaan: $maqamName") },
+                title = {
+                    Column {
+                        Text(
+                            text = tabs[selectedTabIndex],
+                            style = MaterialTheme.typography.titleMedium,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        Text(
+                            text = maqamName,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali"
+                            contentDescription = "Kembali",
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.95f),
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
+                .padding(paddingValues)
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primaryContainer,
-                            MaterialTheme.colorScheme.surface
-                        )
-                    )
-                )
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+                .background(MaterialTheme.colorScheme.surface)
         ) {
+            // Image Area - Foto Ayat (Dominan)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.7f)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                // Tilawah selalu pakai alfatihah, Mujawwad pakai gambar per maqom
+                val imageResourceId = if (selectedTabIndex == 0) {
+                    // Tilawah: selalu alfatihah
+                    R.drawable.alfatihah
+                } else {
+                    // Mujawwad: gambar berbeda per maqom
+                    val imageName = "mujawwad_$maqamId"
+                    @Suppress("DiscouragedApi")
+                    val id = context.resources.getIdentifier(imageName, "drawable", context.packageName)
+                    if (id != 0) id else R.drawable.alfatihah
+                }
+
+                Image(
+                    painter = painterResource(id = imageResourceId),
+                    contentDescription = "Surah $maqamName",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            // Audio Player Section
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
                     .fillMaxWidth()
-                    .animateContentSize(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessLow
-                        )
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .weight(0.3f)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 24.dp, vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Pilih Jenis Bacaan",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 48.dp)
-                )
-
-                // Tombol Mujawwad
-                Card(
+                // Progress Bar dengan slider
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    onClick = { onMujawwadClick(maqamId) },
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.CenterStart
                 ) {
+                    // Track background
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(64.dp)
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Mujawwad",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            .height(3.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                shape = RoundedCornerShape(2.dp)
+                            )
+                    )
+                    
+                    // Progress fill
+                    if (duration > 0) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(currentPosition.toFloat() / duration.toFloat())
+                                .height(3.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(2.dp)
+                                )
+                        )
+                        
+                        // Slider circle
+                        Box(
+                            modifier = Modifier
+                                .offset(
+                                    x = ((currentPosition.toFloat() / duration.toFloat()) * 100).dp - 6.dp
+                                )
+                                .size(12.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(50)
+                                )
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Tombol Tilawah
-                Card(
+                // Duration text (left and right)
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    onClick = { onTilawahClick("Al-Fatihah") },
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
+                    Text(
+                        text = formatTime(currentPosition),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    // Play Button - Circular di tengah
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                if (isPlaying) {
+                                    mediaPlayer?.pause()
+                                    isPlaying = false
+                                } else {
+                                    if (mediaPlayer == null) {
+                                        mediaPlayer?.release()
+                                        mediaPlayer = null
+                                        
+                                        // Audio berbeda per maqom
+                                        val audioPath = if (selectedTabIndex == 0) {
+                                            // Tilawah: audio berbeda per maqom
+                                            "tilawah_$maqamId"
+                                        } else {
+                                            // Mujawwad: audio berbeda per maqom
+                                            "mujawwad_$maqamId"
+                                        }
+                                        
+                                        @Suppress("DiscouragedApi")
+                                        val audioResourceId = context.resources.getIdentifier(audioPath, "raw", context.packageName)
+                                        
+                                        if (audioResourceId != 0) {
+                                            mediaPlayer = MediaPlayer.create(context, audioResourceId)
+                                            mediaPlayer?.start()
+                                            isPlaying = true
+                                        } else {
+                                            Toast.makeText(context, "File audio tidak ditemukan: $audioPath", Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
+                                        mediaPlayer?.start()
+                                        isPlaying = true
+                                    }
+                                }
+                            }
+                        },
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp)
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
+                            .size(64.dp)
+                            .clip(RoundedCornerShape(50)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RoundedCornerShape(50),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text(
-                            text = "Tilawah",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        Icon(
+                            imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                            contentDescription = if (isPlaying) "Jeda" else "Putar",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(32.dp)
                         )
                     }
+                    
+                    Text(
+                        text = formatTime(duration),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // Tabs (di paling bawah)
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                divider = {}
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = {
+                            Text(
+                                title,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        },
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
                 }
             }
         }
     }
 }
+
