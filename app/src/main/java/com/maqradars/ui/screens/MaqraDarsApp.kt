@@ -43,7 +43,6 @@ import com.maqradars.ui.screens.pengaturan.SettingsScreen
 import com.maqradars.ui.screens.pengaturan.menu.WebViewScreen
 import com.maqradars.ui.viewmodel.MaqamViewModel
 
-private const val GEMINI_API_KEY = "AIzaSyDW1VZe5D6vf9hyzhXm5B8PRj4pEk0YwsY"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,22 +163,22 @@ fun MaqraDarsApp(
             composable(Screen.Settings.route) {
                 SettingsScreen(navController = navController)
             }
-            composable(Screen.AskQori.route) {
-                val generativeModel = remember {
-                    GenerativeModel(
-                        modelName = "gemini-1.5-flash",
-                        apiKey = GEMINI_API_KEY,
-                        systemInstruction = content {
-                            text("Berperanlah sebagai seorang qori yang ramah, informatif, dan profesional. Berikan saran dan motivasi dalam mempelajari Al-Quran dan maknanya, jangan memberikan diagnosis atau resep spesifik, dan selalu sarankan untuk berkonsultasi langsung dengan guru jika ada keluhan serius. Setiap respons harus ringkas dan mudah dipahami. jangan bilang kamu adalah program komputer")
-                        }
-                    )
-                }
-                val chatInstance = remember { generativeModel.startChat() }
-                AskQoriScreen(
-                    onBackClick = { navController.popBackStack() },
-                    chatInstance = chatInstance
-                )
-            }
+             composable(Screen.AskQori.route) {
+                 val generativeModel = remember {
+                     GenerativeModel(
+                         modelName = "gemini-1.5-flash",
+                         apiKey = BuildConfig.GEMINI_API_KEY,
+                         systemInstruction = content {
+                             text("Berperanlah sebagai seorang qori yang ramah, informatif, dan profesional. Berikan saran dan motivasi dalam mempelajari Al-Quran dan maknanya, jangan memberikan diagnosis atau resep spesifik, dan selalu sarankan untuk berkonsultasi langsung dengan guru jika ada keluhan serius. Setiap respons harus ringkas dan mudah dipahami. jangan bilang kamu adalah program komputer")
+                         }
+                     )
+                 }
+                 val chatInstance = remember { generativeModel.startChat() }
+                 AskQoriScreen(
+                     onBackClick = { navController.popBackStack() },
+                     chatInstance = chatInstance
+                 )
+             }
             composable("about_screen") {
                 AboutScreen(onBackClick = { navController.popBackStack() })
             }

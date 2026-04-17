@@ -34,11 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Image
+import com.maqradars.R
 import com.maqradars.data.model_api.Ayat
 import com.maqradars.data.model_api.DetailSurat
 import com.maqradars.ui.utils.ResponsiveUtils
@@ -126,17 +129,20 @@ fun AyatItem(
     ) {
         Box(
             modifier = Modifier
-                .size(32.dp)
-                .align(Alignment.Top)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
+                .size(50.dp)
+                .align(Alignment.Top),
             contentAlignment = Alignment.Center
         ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_noayat),
+                contentDescription = "Nomor Ayat",
+                modifier = Modifier.fillMaxSize()
+            )
             Text(
                 text = "${ayat.nomorAyat}",
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold
             )
         }
 
@@ -149,7 +155,7 @@ fun AyatItem(
                 text = ayat.teksArab,
                 textAlign = TextAlign.End,
                 style = MaterialTheme.typography.headlineLarge,
-                fontSize = (fontSize.value + 10).sp,
+                fontSize = (fontSize.value + 15).sp,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -157,17 +163,17 @@ fun AyatItem(
 
             Text(
                 text = ayat.teksLatin,
-                fontSize = (fontSize.value + 2).sp,
+                fontSize = (fontSize.value).sp,
                 fontStyle = FontStyle.Italic,
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = ayat.teksIndonesia,
-                fontSize = (fontSize.value + 2).sp,
+                fontSize = (fontSize.value).sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.fillMaxWidth(),
                 lineHeight = (fontSize.value + 4).sp

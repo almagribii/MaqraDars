@@ -53,7 +53,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun MaqraDarsTheme(
-    darkTheme: Boolean,
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme

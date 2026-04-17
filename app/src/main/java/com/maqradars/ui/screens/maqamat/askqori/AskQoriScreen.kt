@@ -17,6 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -30,7 +32,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-data class ChatMessage(val text: String, val isUser: Boolean)
+data class ChatMessage(val text: String, val isUser: Boolean, val timestamp: Long = System.currentTimeMillis())
+
+// Rate limiting - minimum 5 detik antara requests untuk menghindari quota limit
+private const val MIN_REQUEST_INTERVAL_MS = 5000L
+private var lastRequestTime = 0L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +70,8 @@ fun AskQoriScreen(
                     Text(
                         text = "Tanya Qori",
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
                 },
                 navigationIcon = {
@@ -76,35 +83,131 @@ fun AskQoriScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
-        },
-        bottomBar = {
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            // Chat Messages Area
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                state = lazyColumnState,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                if (messages.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(32.dp)
+                            ) {
+                                Text(
+                                    text = "Assalamu'alaikum! 👋",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "Tanyakan kepada saya tentang Maqam, Tilawah, atau apapun yang ingin Anda ketahui tentang Al-Quran.",
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+                }
+
+                items(messages) { message ->
+                    MessageBubble(message = message)
+                }
+
+                // Typing indicator
+                if (isSending) {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Card(
+                                shape = RoundedCornerShape(12.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                ),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    repeat(3) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(6.dp),
+                                            strokeWidth = 1.dp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Divider(
+                modifier = Modifier.padding(horizontal = 0.dp),
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            // Input Area
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
-                    .padding(bottom =  40.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedTextField(
+                TextField(
                     value = questionInput,
                     onValueChange = { questionInput = it },
-                    placeholder = { Text("Tanya Qori...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    placeholder = { Text("Ketik pertanyaan...", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp) },
                     modifier = Modifier
                         .weight(1f)
-                        .heightIn(min = 50.dp, max = 150.dp)
-                        .clip(RoundedCornerShape(1.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                        .heightIn(min = 48.dp, max = 150.dp)
+                        .clip(RoundedCornerShape(24.dp)),
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
                         keyboardType = KeyboardType.Text
                     ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    )
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    singleLine = false,
+                    textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = 14.sp)
                 )
-
-                Spacer(modifier = Modifier.width(8.dp))
 
                 FloatingActionButton(
                     onClick = {
@@ -124,50 +227,19 @@ fun AskQoriScreen(
                             Toast.makeText(applicationContext, "Pertanyaan tidak boleh kosong!", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    modifier = Modifier.size(50.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .alpha(if (isSending) 0.5f else 1f),
                     containerColor = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(percent = 50)
                 ) {
                     Icon(
                         Icons.Filled.Send,
                         contentDescription = "Kirim Pesan",
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
-                state = lazyColumnState,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(messages) { message ->
-                    MessageBubble(message = message)
-                }
-            }
-
-            if (isSending) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "Qori sedang mengetik...",
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }
@@ -176,23 +248,33 @@ fun AskQoriScreen(
 @Composable
 fun MessageBubble(message: ChatMessage) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = if (message.isUser) Arrangement.End else Arrangement.Start
     ) {
         Card(
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = if (message.isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                containerColor = if (message.isUser) 
+                    MaterialTheme.colorScheme.primary 
+                else 
+                    MaterialTheme.colorScheme.surfaceVariant
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
             modifier = Modifier
-                .widthIn(max = 280.dp)
+                .widthIn(max = 300.dp)
                 .padding(vertical = 4.dp)
         ) {
             Text(
                 text = message.text,
-                color = if (message.isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(12.dp)
+                color = if (message.isUser) 
+                    MaterialTheme.colorScheme.onPrimary 
+                else 
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(12.dp),
+                fontSize = 14.sp,
+                lineHeight = 20.sp
             )
         }
     }
@@ -207,6 +289,21 @@ private fun sendPrompt(
     applicationContext: Context,
     composableScope: CoroutineScope
 ) {
+    // Rate limiting - tunggu minimal 5 detik dari request terakhir
+    val now = System.currentTimeMillis()
+    if (now - lastRequestTime < MIN_REQUEST_INTERVAL_MS) {
+        val waitTime = ((MIN_REQUEST_INTERVAL_MS - (now - lastRequestTime)) / 1000) + 1
+        composableScope.launch(Dispatchers.Main) {
+            Toast.makeText(
+                applicationContext,
+                "Tunggu $waitTime detik sebelum mengirim pertanyaan lagi...",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        return
+    }
+    lastRequestTime = now
+
     setIsSending(true)
     composableScope.launch(Dispatchers.IO) {
         try {
@@ -215,7 +312,7 @@ private fun sendPrompt(
             val generatedText = response.text
 
             withContext(Dispatchers.Main) {
-                if (generatedText != null) {
+                if (!generatedText.isNullOrBlank()) {
                     messages.add(ChatMessage(generatedText, false))
                 } else {
                     messages.add(ChatMessage("Qori: Tidak ada respons dari AI.", false))
@@ -223,7 +320,20 @@ private fun sendPrompt(
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                messages.add(ChatMessage("Qori: Terjadi kesalahan: ${e.message}", false))
+                val errorMessage = when {
+                    e.message?.contains("429") == true || e.message?.contains("Quota exceeded") == true -> 
+                        "Terlalu banyak request. Silakan tunggu beberapa saat sebelum mencoba lagi."
+                    e.message?.contains("403") == true -> 
+                        "Error: API Key tidak valid atau sudah expired. Periksa local.properties"
+                    e.message?.contains("401") == true -> 
+                        "Error: Autentikasi gagal. Periksa API Key Anda."
+                    e.message?.contains("500") == true -> 
+                        "Error: Server sedang bermasalah. Coba lagi nanti."
+                    else -> 
+                        "Error: ${e.message ?: "Terjadi kesalahan yang tidak diketahui"}"
+                }
+                messages.add(ChatMessage("Qori: $errorMessage", false))
+                android.util.Log.e("AskQoriScreen", "Send prompt error", e)
             }
         } finally {
             withContext(Dispatchers.Main) {

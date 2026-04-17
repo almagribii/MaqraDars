@@ -79,7 +79,8 @@ class MainActivity : ComponentActivity() {
                 })
             } else {
                 val user by viewModel.user.collectAsState(initial = null)
-                val isDarkMode = user?.isDarkMode ?: isSystemInDarkTheme()
+                // Always use light theme unless user explicitly set dark mode
+                val isDarkMode = user?.isDarkMode ?: false
 
                 MaqraDarsTheme(darkTheme = isDarkMode) {
                     Surface(
