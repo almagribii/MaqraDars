@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import java.util.Calendar
 
 object NotificationScheduler {
@@ -100,7 +101,7 @@ object NotificationScheduler {
                     pendingIntent
                 )
             }
-            android.util.Log.d("NotificationScheduler", "Scheduled $type at ${calendar.time}")
+            Log.d("NotificationScheduler", "Scheduled $type at ${calendar.time}")
         } catch (e: Exception) {
             // Fallback ke setAndAllowWhileIdle jika permission denied
             try {
@@ -109,8 +110,9 @@ object NotificationScheduler {
                     calendar.timeInMillis,
                     pendingIntent
                 )
-                android.util.Log.d("NotificationScheduler", "Scheduled $type (fallback) at ${calendar.time}")
+                Log.d("NotificationScheduler", "Scheduled $type (fallback) at ${calendar.time}")
             } catch (ex: Exception) {
+                Log.e("NotificationScheduler", "Failed to schedule $type", ex)
                 ex.printStackTrace()
             }
         }
@@ -143,7 +145,9 @@ object NotificationScheduler {
         try {
             alarmManager.cancel(reminderPendingIntent)
             alarmManager.cancel(tipsPendingIntent)
+            Log.d("NotificationScheduler", "Notifications cancelled")
         } catch (e: Exception) {
+            Log.e("NotificationScheduler", "Failed to cancel notifications", e)
             e.printStackTrace()
         }
     }

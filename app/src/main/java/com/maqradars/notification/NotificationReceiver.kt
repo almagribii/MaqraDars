@@ -7,27 +7,60 @@ import android.util.Log
 import java.util.Calendar
 
 class NotificationReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-        val currentTime = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
-            .format(Calendar.getInstance().time)
-        Log.d("NotificationReceiver", "Notifikasi received at $currentTime")
-        
-        val type = intent.getStringExtra("type") ?: return
+    override fun onReceive(context: Context, intent: Intent?) {
+        try {
+            // Early null checks
+            if (context == null || intent == null) {
+                Log.w(TAG, "Context or Intent is null")
+                return
+            }
 
-        when (type) {
-            "reminder" -> {
-                Log.d("NotificationReceiver", "Showing reminder")
-                NotificationHelper.showReminderNotification(context)
+            val type = intent.getStringExtra("type")
+            if (type.isNullOrEmpty()) {
+                Log.w(TAG, "Notification type is missing or empty")
+                return
             }
-            "tips" -> {
-                Log.d("NotificationReceiver", "Showing tips")
-                NotificationHelper.showTipsNotification(context)
+
+            // Log without heavy date formatting on main thread
+            Log.d(TAG, "Notification received - Type: $type at ${System.currentTimeMillis()}")
+
+            when (type) {
+                "reminder" -> {
+                    Log.d(TAG, "Showing reminder notification")
+                    try {
+                        NotificationHelper.showReminderNotification(context)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error showing reminder notification", e)
+                    }
+                }
+                "tips" -> {
+                    Log.d(TAG, "Showing tips notification")
+                    try {
+                        NotificationHelper.showTipsNotification(context)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error showing tips notification", e)
+                    }
+                }
+                else -> {
+                    Log.w(TAG, "Unknown notification type: $type")
+                }
             }
+
+            // Re-schedule notifications for tomorrow
+            Log.d(TAG, "Rescheduling notifications")
+            try {
+                NotificationScheduler.scheduleNotifications(context)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error scheduling notifications", e)
+            }
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in NotificationReceiver.onReceive", e)
         }
+    }
 
-        // Re-schedule untuk esok hari
-        Log.d("NotificationReceiver", "Rescheduling notifications")
-        NotificationScheduler.scheduleNotifications(context)
+    companion object {
+        private const val TAG = "NotificationReceiver"
     }
 }
 
