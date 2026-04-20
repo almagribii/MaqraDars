@@ -175,7 +175,6 @@ fun AboutScreen(onBackClick: () -> Unit) {
                         try {
                             context.startActivity(intent)
                         } catch (_: Exception) {
-                            // Fallback jika WhatsApp tidak terinstall
                         }
                     }
                 )

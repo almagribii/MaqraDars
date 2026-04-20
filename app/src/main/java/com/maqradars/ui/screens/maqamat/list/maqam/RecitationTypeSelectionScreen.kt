@@ -16,7 +16,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -52,7 +51,6 @@ fun RecitationTypeSelectionScreen(
     var currentPosition by remember { mutableStateOf(0) }
     var duration by remember { mutableStateOf(0) }
 
-    // Update posisi audio setiap 100ms
     LaunchedEffect(isPlaying) {
         while (isPlaying) {
             mediaPlayer?.let {
@@ -63,7 +61,6 @@ fun RecitationTypeSelectionScreen(
         }
     }
 
-    // Reset audio saat berganti tab
     LaunchedEffect(selectedTabIndex) {
         mediaPlayer?.stop()
         mediaPlayer?.release()
@@ -84,19 +81,11 @@ fun RecitationTypeSelectionScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(
-                            text = tabs[selectedTabIndex],
-                            style = MaterialTheme.typography.titleMedium,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        Text(
-                            text = maqamName,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
+                    Text(
+                        text = maqamName,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold,
+                    )
                 },
                 navigationIcon = {
                     IconButton(
@@ -126,7 +115,6 @@ fun RecitationTypeSelectionScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            // Image Area - Foto Ayat (Dominan)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -135,13 +123,14 @@ fun RecitationTypeSelectionScreen(
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Tilawah selalu pakai alfatihah, Mujawwad pakai gambar per maqom
                 val imageResourceId = if (selectedTabIndex == 0) {
-                    // Tilawah: selalu alfatihah
                     R.drawable.alfatihah
                 } else {
-                    // Mujawwad: gambar berbeda per maqom
-                    val imageName = "mujawwad_$maqamId"
+                    val imageName = if (maqamName.equals("Bayati", ignoreCase = true)) {
+                        "bayati_mujawwad"
+                    } else {
+                        "mujawwad_$maqamId"
+                    }
                     @Suppress("DiscouragedApi")
                     val id = context.resources.getIdentifier(imageName, "drawable", context.packageName)
                     if (id != 0) id else R.drawable.alfatihah
@@ -155,7 +144,6 @@ fun RecitationTypeSelectionScreen(
                 )
             }
 
-            // Audio Player Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -165,14 +153,12 @@ fun RecitationTypeSelectionScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Progress Bar dengan slider
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    // Track background
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -183,7 +169,6 @@ fun RecitationTypeSelectionScreen(
                             )
                     )
                     
-                    // Progress fill
                     if (duration > 0) {
                         Box(
                             modifier = Modifier
@@ -195,7 +180,6 @@ fun RecitationTypeSelectionScreen(
                                 )
                         )
                         
-                        // Slider circle
                         Box(
                             modifier = Modifier
                                 .offset(
@@ -210,7 +194,6 @@ fun RecitationTypeSelectionScreen(
                     }
                 }
 
-                // Duration text (left and right)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -224,7 +207,6 @@ fun RecitationTypeSelectionScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     
-                    // Play Button - Circular di tengah
                     Button(
                         onClick = {
                             coroutineScope.launch {
@@ -236,12 +218,9 @@ fun RecitationTypeSelectionScreen(
                                         mediaPlayer?.release()
                                         mediaPlayer = null
                                         
-                                        // Audio berbeda per maqom
                                         val audioPath = if (selectedTabIndex == 0) {
-                                            // Tilawah: audio berbeda per maqom
                                             "tilawah_$maqamId"
                                         } else {
-                                            // Mujawwad: audio berbeda per maqom
                                             "mujawwad_$maqamId"
                                         }
                                         
@@ -287,7 +266,6 @@ fun RecitationTypeSelectionScreen(
                 }
             }
 
-            // Tabs (di paling bawah)
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 modifier = Modifier.fillMaxWidth(),
@@ -300,12 +278,29 @@ fun RecitationTypeSelectionScreen(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
                         text = {
-                            Text(
-                                title,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    title,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                                if (selectedTabIndex == index) {
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .size(6.dp)
+                                            .background(
+                                                color = MaterialTheme.colorScheme.onPrimary,
+                                                shape = RoundedCornerShape(50)
+                                            )
+                                    )
+                                }
+                            }
                         },
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
