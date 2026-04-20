@@ -223,10 +223,12 @@ fun RecitationTypeSelectionScreen(
                                         mediaPlayer?.release()
                                         mediaPlayer = null
                                         
-                                        val audioPath = if (selectedTabIndex == 0) {
-                                            "tilawah_$maqamId"
-                                        } else {
-                                            "mujawwad_$maqamId"
+                                        val audioPath = when {
+                                            selectedTabIndex == 0 && maqamName.equals("Rast", ignoreCase = true) -> "rast"
+                                            selectedTabIndex == 0 && maqamName.equals("Jiharkah", ignoreCase = true) -> "jiharkah"
+                                            selectedTabIndex == 0 && maqamName.equals("Nahawand", ignoreCase = true) -> "nahawand"
+                                            selectedTabIndex == 0 -> "tilawah_$maqamId"
+                                            else -> "mujawwad_$maqamId"
                                         }
                                         
                                         @Suppress("DiscouragedApi")
