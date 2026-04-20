@@ -126,10 +126,15 @@ fun RecitationTypeSelectionScreen(
                 val imageResourceId = if (selectedTabIndex == 0) {
                     R.drawable.alfatihah
                 } else {
-                    val imageName = if (maqamName.equals("Bayati", ignoreCase = true)) {
-                        "bayati_mujawwad"
-                    } else {
-                        "mujawwad_$maqamId"
+                    val imageName = when {
+                        maqamName.equals("Bayati", ignoreCase = true) -> "bayati_mujawwad"
+                        maqamName.equals("Hijaz", ignoreCase = true) -> "hijaz_mujawwad"
+                        maqamName.equals("Jiharkah", ignoreCase = true) -> "jiharkah_mujawwad"
+                        maqamName.equals("Rast", ignoreCase = true) -> "rast_mujawwad"
+                        maqamName.equals("Sika", ignoreCase = true) -> "sika_mujawwad"
+                        maqamName.equals("Nahawand", ignoreCase = true) -> "nahawand_mujawwad"
+                        maqamName.equals("Soba", ignoreCase = true) || maqamName.equals("Shoba", ignoreCase = true) -> "soba_mujawwad"
+                        else -> "mujawwad_$maqamId"
                     }
                     @Suppress("DiscouragedApi")
                     val id = context.resources.getIdentifier(imageName, "drawable", context.packageName)
