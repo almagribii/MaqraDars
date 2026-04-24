@@ -1,4 +1,3 @@
-// app/src/main/java/com/maqradars/ui/screens/RecitationTypeSelectionScreen.kt
 
 package com.maqradars.ui.screens.maqamat.list.maqam
 
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import com.maqradars.R
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -48,16 +48,18 @@ fun RecitationTypeSelectionScreen(
     val context = LocalContext.current
     var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
     var isPlaying by remember { mutableStateOf(false) }
-    var currentPosition by remember { mutableStateOf(0) }
-    var duration by remember { mutableStateOf(0) }
+    var currentPosition by remember { mutableStateOf(0f) } // Ubah ke Float untuk Slider
+    var duration by remember { mutableStateOf(0f) }        // Ubah ke Float untuk Slider
+    var isDragging by remember { mutableStateOf(false) } // State saat user menggeser slider
 
-    LaunchedEffect(isPlaying) {
-        while (isPlaying) {
+    // LaunchedEffect untuk mengupdate progress secara realtime
+    LaunchedEffect(isPlaying, isDragging) {
+        while (isPlaying && !isDragging) {
             mediaPlayer?.let {
-                currentPosition = it.currentPosition
-                duration = it.duration
+                currentPosition = it.currentPosition.toFloat()
+                duration = it.duration.toFloat()
             }
-            kotlinx.coroutines.delay(100)
+            delay(500) // Update setiap 0.5 detik agar lebih smooth dan efisien
         }
     }
 
@@ -66,8 +68,8 @@ fun RecitationTypeSelectionScreen(
         mediaPlayer?.release()
         mediaPlayer = null
         isPlaying = false
-        currentPosition = 0
-        duration = 0
+        currentPosition = 0f
+        duration = 0f
     }
 
     DisposableEffect(Unit) {
@@ -90,9 +92,7 @@ fun RecitationTypeSelectionScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = onBackClick,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-
+                        modifier = Modifier.clip(RoundedCornerShape(12.dp))
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -123,6 +123,7 @@ fun RecitationTypeSelectionScreen(
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
+                // Logika Gambar Tetap Sama Sesuai Kode Asli Anda
                 val imageResourceId = if (selectedTabIndex == 0) {
                     R.drawable.alfatihah
                 } else {
@@ -158,46 +159,26 @@ fun RecitationTypeSelectionScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(3.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                                shape = RoundedCornerShape(2.dp)
-                            )
-                    )
-                    
-                    if (duration > 0) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(currentPosition.toFloat() / duration.toFloat())
-                                .height(3.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(2.dp)
-                                )
-                        )
-                        
-                        Box(
-                            modifier = Modifier
-                                .offset(
-                                    x = ((currentPosition.toFloat() / duration.toFloat()) * 100).dp - 6.dp
-                                )
-                                .size(12.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = RoundedCornerShape(50)
-                                )
-                        )
-                    }
-                }
+                // --- BAGIAN PROGRESS AUDIO YANG DIUBAH MENJADI SLIDER ---
+                Slider(
+                    value = currentPosition,
+                    onValueChange = {
+                        isDragging = true
+                        currentPosition = it
+                    },
+                    onValueChangeFinished = {
+                        mediaPlayer?.seekTo(currentPosition.toInt())
+                        isDragging = false
+                    },
+                    valueRange = 0f..(if (duration > 0) duration else 1f),
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.primary,
+                        activeTrackColor = MaterialTheme.colorScheme.primary,
+                        inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                // -------------------------------------------------------
 
                 Row(
                     modifier = Modifier
@@ -207,11 +188,10 @@ fun RecitationTypeSelectionScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = formatTime(currentPosition),
+                        text = formatTime(currentPosition.toInt()),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
                     Button(
                         onClick = {
                             coroutineScope.launch {
@@ -220,22 +200,33 @@ fun RecitationTypeSelectionScreen(
                                     isPlaying = false
                                 } else {
                                     if (mediaPlayer == null) {
-                                        mediaPlayer?.release()
-                                        mediaPlayer = null
-                                        
                                         val audioPath = when {
                                             selectedTabIndex == 0 && maqamName.equals("Rast", ignoreCase = true) -> "rast"
                                             selectedTabIndex == 0 && maqamName.equals("Jiharkah", ignoreCase = true) -> "jiharkah"
                                             selectedTabIndex == 0 && maqamName.equals("Nahawand", ignoreCase = true) -> "nahawand"
-                                            selectedTabIndex == 0 -> "tilawah_$maqamId"
+                                            selectedTabIndex == 0 && maqamName.equals("Bayati", ignoreCase = true) -> "bayati"
+                                            selectedTabIndex == 0 && maqamName.equals("Hijaz", ignoreCase = true) -> "hijaz"
+                                            selectedTabIndex == 0 && maqamName.equals("Shoba", ignoreCase = true) -> "shoba"
+                                            selectedTabIndex == 0 && maqamName.equals("Sika", ignoreCase = true) -> "sika"
+                                            selectedTabIndex == 1 && maqamName.equals("Shoba", ignoreCase = true) -> "shoba_mujawwad"
+                                            selectedTabIndex == 1 && maqamName.equals("Sika", ignoreCase = true) -> "sika_mujawwad"
+                                            selectedTabIndex == 1 && maqamName.equals("Rast", ignoreCase = true) -> "rast_mujawwad"
+                                            selectedTabIndex == 1 && maqamName.equals("Jiharkah", ignoreCase = true) -> "jiharkah_mujawwad"
+                                            selectedTabIndex == 1 && maqamName.equals("Nahawand", ignoreCase = true) -> "nahawand_mujawwad"
+                                            selectedTabIndex == 1 && maqamName.equals("Bayati", ignoreCase = true) -> "bayati_mujawwad"
+                                            selectedTabIndex == 1 && maqamName.equals("Hijaz", ignoreCase = true) -> "hijaz_mujawwad"
+                                            selectedTabIndex == 1 -> "tilawah_$maqamId"
                                             else -> "mujawwad_$maqamId"
                                         }
-                                        
                                         @Suppress("DiscouragedApi")
                                         val audioResourceId = context.resources.getIdentifier(audioPath, "raw", context.packageName)
-                                        
                                         if (audioResourceId != 0) {
                                             mediaPlayer = MediaPlayer.create(context, audioResourceId)
+                                            duration = mediaPlayer?.duration?.toFloat() ?: 0f
+                                            mediaPlayer?.setOnCompletionListener {
+                                                isPlaying = false
+                                                currentPosition = 0f
+                                            }
                                             mediaPlayer?.start()
                                             isPlaying = true
                                         } else {
@@ -264,9 +255,8 @@ fun RecitationTypeSelectionScreen(
                             modifier = Modifier.size(32.dp)
                         )
                     }
-                    
                     Text(
-                        text = formatTime(duration),
+                        text = formatTime(duration.toInt()),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -316,4 +306,3 @@ fun RecitationTypeSelectionScreen(
         }
     }
 }
-
